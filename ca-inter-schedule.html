@@ -1,0 +1,3448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>CA Inter · Remaining Lectures Planner</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+/* ── Flip-Tile Clock – Draggable ── */
+.digi-clock-bar {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, #6366f1 0%, #7c3aed 50%, #6366f1 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  padding: 10px 18px 10px 14px;
+  z-index: 9999;
+  border-radius: 14px;
+  box-shadow: 0 6px 28px rgba(99,102,241,0.55);
+  width: auto;
+  user-select: none;
+  cursor: grab;
+  transition: box-shadow 0.2s, transform 0.15s;
+}
+.digi-clock-bar.dragging {
+  cursor: grabbing;
+  box-shadow: 0 12px 40px rgba(99,102,241,0.7);
+  transform: scale(1.04);
+}
+.digi-clock-bar:hover { box-shadow: 0 8px 32px rgba(99,102,241,0.65); }
+/* Drag handle dots */
+.clk-handle {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-right: 10px;
+  opacity: 0.5;
+  padding: 2px;
+}
+.clk-handle span {
+  display: flex;
+  gap: 3px;
+}
+.clk-handle span i {
+  width: 3px; height: 3px;
+  background: #fff;
+  border-radius: 50%;
+  display: block;
+}
+/* Tile group: 2 digit tiles + label */
+.clk-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+.clk-tiles {
+  display: flex;
+  gap: 3px;
+}
+.clk-tile {
+  width: 32px;
+  height: 40px;
+  background: #e8eaf6;
+  border-radius: 8px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.25), inset 0 -2px 0 rgba(0,0,0,0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #1e1b4b;
+  font-family: 'Inter', system-ui, sans-serif;
+  letter-spacing: 0;
+  transition: transform 0.12s ease;
+}
+.clk-label {
+  font-size: 0.56rem;
+  font-weight: 500;
+  color: rgba(255,255,255,0.75);
+  text-transform: lowercase;
+  letter-spacing: 0.08em;
+  font-family: 'Inter', sans-serif;
+}
+/* Colon separator between groups */
+.clk-colon {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: rgba(255,255,255,0.65);
+  padding: 0 5px;
+  margin-bottom: 16px;
+  font-family: 'Inter', sans-serif;
+  line-height: 40px;
+  align-self: flex-start;
+}
+
+:root {
+  --bg: #0f172a; 
+  --panel: #1e293b; 
+  --panel-border: #334155; 
+  --text-main: #f8fafc;
+  --text-dim: #94a3b8;
+  --accent: #8b5cf6; 
+  --accent-glow: rgba(139, 92, 246, 0.5);
+  --success: #10b981;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  zoom: 110%;
+  margin: 0; padding: 0;
+  background-color: var(--bg);
+  color: var(--text-main);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.5;
+}
+
+/* App Layout */
+.app-container { display: flex; min-height: 100vh; }
+.left-sidebar {
+  width: 72px; 
+  background: #171717; 
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 999px;
+  display: flex; flex-direction: column; align-items: center; padding: 24px 0;
+  position: sticky; top: 24px; height: calc(100vh - 48px); z-index: 100;
+  margin-left: 24px; margin-right: -12px;
+  box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5);
+}
+.brand-icon {
+  width: 44px; height: 44px; background: linear-gradient(135deg, var(--accent), #a855f7);
+  border-radius: 50%; color: #fff; display: grid; place-items: center;
+  font-weight: 800; font-size: 16px; margin-bottom: 40px; flex-shrink: 0;
+  box-shadow: 0 4px 20px var(--accent-glow);
+}
+.side-icons { display: flex; flex-direction: column; gap: 20px; }
+.side-icons a {
+  width: 44px; height: 44px; display: grid; place-items: center;
+  border-radius: 50%; font-size: 20px; text-decoration: none;
+  transition: all 0.3s ease; color: var(--text-dim); opacity: 0.5;
+  flex-shrink: 0;
+}
+.side-icons a:hover { background: rgba(255,255,255,0.1); opacity: 1; }
+.side-icons a.on {
+  background: rgba(168,85,247,0.25) !important;
+  border: 1px solid rgba(168,85,247,0.6);
+  box-shadow: 0 0 20px rgba(168,85,247,0.5), inset 0 0 10px rgba(168,85,247,0.2);
+  opacity: 1;
+  color: #fff;
+  transform: scale(1.15);
+}
+
+.main-content { flex: 1; padding: 32px 48px; min-width: 0; }
+
+/* Headers */
+h1, h2, h3, h4 { margin: 0; font-weight: 700; color: var(--text-main); }
+.top-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 40px; flex-wrap: wrap; gap: 20px;}
+.greeting h1 { font-size: 28px; font-weight: 800; letter-spacing: -0.03em; margin-bottom: 6px; }
+.greeting .hint { color: var(--text-dim); font-size: 14px; margin: 0; }
+.search-profile { display: flex; align-items: center; gap: 16px; }
+.search-profile input {
+  background: var(--bg); border: 1px solid var(--panel-border);
+  padding: 10px 16px; border-radius: var(--radius-md); color: var(--text-main);
+  outline: none; font-family: inherit; font-size: 14px; transition: 0.2s;
+}
+.search-profile input:focus { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-glow); }
+
+#btnNotify { background: var(--panel); border: 1px solid var(--panel-border); border-radius: 50%; width: 40px; height: 40px; cursor: pointer; transition: 0.2s; }
+#btnNotify:hover { background: var(--panel-border); }
+
+/* Dashboard Grid */
+.dashboard-grid { display: flex; flex-direction: column; gap: 24px; align-items: stretch; width: 100%; }
+.dashboard-grid > div { width: 100%; max-width: 100%; box-sizing: border-box; }
+
+
+@media(max-width: 1024px){ .main-content { padding: 16px; } }
+
+.white-card {
+  background: var(--panel); border: 1px solid var(--panel-border);
+  border-radius: var(--radius-lg); padding: 32px;
+  margin-bottom: 24px; overflow-x: auto;
+}
+.white-card::-webkit-scrollbar { height: 6px; }
+.white-card::-webkit-scrollbar-thumb { background: var(--panel-border); border-radius: 3px; }
+
+.white-card > section > h2 { font-size: 18px; margin-bottom: 6px; letter-spacing: -0.02em; display: flex; align-items: center; gap: 8px;}
+.white-card > section > .hint { font-size: 13px; color: var(--text-dim); margin: 0 0 24px; line-height: 1.5; }
+
+/* Stats Cards */
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; margin-bottom: 40px; }
+.stat {
+  background: linear-gradient(145deg, var(--panel), #141417);
+  border: 1px solid var(--panel-border); border-radius: var(--radius-lg); padding: 24px;
+  display: flex; flex-direction: column; position: relative; overflow: hidden;
+}
+.stat::after { content:""; position:absolute; top:0; left:0; width:100%; height:1px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent); }
+.stat em { font-style: normal; font-size: 13px; color: var(--text-dim); font-weight: 500; margin-bottom: 8px; }
+.stat b { font-size: 40px; font-weight: 800; color: #fff; letter-spacing: -0.04em; margin-bottom: 4px; line-height: 1; }
+.stat b span { font-size: 16px; color: var(--text-dim); font-weight: 600; margin-left: 6px; }
+
+/* Buttons & Inputs */
+button, input { font-family: inherit; }
+.bub {
+  appearance: none; border: 1px solid var(--panel-border); cursor: pointer; text-align: left; padding: 12px 16px;
+  border-radius: var(--radius-md); font-size: 13px; font-weight: 600; color: var(--text-main);
+  background: var(--bg); transition: all 0.2s ease; display: flex; align-items: center; gap: 12px; width: 100%;
+}
+.bub:hover { background: var(--panel-border); }
+.bub .dot { width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--text-dim); flex-shrink: 0; transition: 0.2s; }
+.bub.on { background: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.3); color: var(--success); }
+.bub.on .dot { background: var(--success); border-color: var(--success); box-shadow: 0 0 10px var(--success-glow); }
+.task.ok .bub { background: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.3); color: var(--success); }
+.task.ok .bub .dot { background: var(--success); border-color: var(--success); box-shadow: 0 0 10px var(--success-glow); }
+
+.tab, .mbtn {
+  background: transparent; border: 1px solid var(--panel-border); padding: 8px 16px; border-radius: 999px;
+  font-size: 13px; font-weight: 600; color: var(--text-dim); cursor: pointer; transition: 0.2s;
+}
+.tab:hover, .mbtn:hover { background: var(--panel-border); color: var(--text-main); }
+.tab.on, .mbtn.on { background: var(--text-main); color: var(--bg); border-color: var(--text-main); }
+
+/* Tables */
+table { width: 100%; border-collapse: separate; border-spacing: 0; text-align: left; font-size: 13px; }
+th { color: var(--text-dim); font-weight: 600; padding: 14px 16px; border-bottom: 1px solid var(--panel-border); }
+td { padding: 16px 16px; border-bottom: 1px solid rgba(255,255,255,0.03); color: var(--text-main); }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(255,255,255,0.02); }
+
+/* Subject Cards (Subgrid) */
+.subgrid { display: grid; grid-template-columns: 1fr; gap: 16px; }
+.scard { background: var(--bg); border: 1px solid var(--panel-border); border-radius: var(--radius-md); padding: 24px; }
+.scard h3 { font-size: 15px; margin: 0 0 12px; display: flex; justify-content: space-between; align-items: center; }
+.tg { font-size: 11px; padding: 4px 8px; border-radius: 6px; font-weight: 700; background: var(--panel-border); text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-main); }
+.meta { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-dim); margin-bottom: 16px; }
+.bar { background: var(--panel-border); height: 6px; border-radius: 3px; overflow: hidden; margin-bottom: 16px; }
+.bar i { display: block; height: 100%; background: var(--accent); border-radius: 3px; transition: width 0.5s; box-shadow: 0 0 12px var(--accent-glow); }
+.ch { margin-top: 12px; border: 1px solid var(--panel-border); border-radius: var(--radius-sm); overflow: hidden; }
+.chrow { padding: 12px; background: #141416; display: flex; justify-content: space-between; align-items: center; }
+.chrow .nm { font-weight: 600; font-size: 13px; color: var(--text-main); }
+.chrow .left { font-size: 11px; color: var(--text-dim); font-weight: 600; }
+.chrow .left.ok { color: var(--success); }
+.lecbox { padding: 12px; background: var(--bg); border-top: 1px solid var(--panel-border); display: none; gap: 8px; flex-direction: column; }
+.ch.open .lecbox { display: flex; }
+.expbtn { background: transparent; border: 1px solid var(--panel-border); padding: 4px 10px; border-radius: 6px; font-size: 11px; color: var(--text-dim); cursor: pointer; }
+.expbtn:hover { background: var(--panel-border); color: var(--text-main); }
+.chbtn { background: transparent; border: none; flex: 1; text-align: left; padding: 0; display: flex; align-items: center; gap: 12px; }
+.chbtn .dot { width: 8px; height: 8px; border-radius: 50%; border: 2px solid var(--text-dim); }
+.ch.done .chbtn .dot { background: var(--success); border-color: var(--success); }
+
+/* Week Chart (.wchart) Fix */
+.wchart { margin: 24px 0; background: var(--bg); border: 1px solid var(--panel-border); border-radius: var(--radius-md); padding: 24px; position: relative; overflow-x: auto;}
+.wdates { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px; position: relative; min-width: 0; width: 100%; padding-top: 40px; }
+.wover { position: absolute; top: 0; left: 0; width: 100%; height: 72px; pointer-events: none; }
+.wday { flex: 1; text-align: center; cursor: pointer; padding: 12px 8px; border-radius: 8px; transition: 0.2s; position: relative; z-index: 2; }
+.wday:hover { background: var(--panel-border); }
+.wday.on { background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.3); }
+.wd { font-size: 11px; color: var(--text-dim); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+.wn { font-size: 16px; font-weight: 800; color: var(--text-main); margin: 4px 0; }
+.pct { font-size: 12px; color: var(--success); font-weight: 700; }
+.wday .hint { font-size: 10px; color: var(--text-dim); margin-top: 4px; display: block; }
+
+/* Color Keys & Colored Cells */
+.colorkey { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; }
+.krow { display: flex; align-items: center; gap: 8px; }
+.tg.ACC { background: rgba(16, 185, 129, 0.1); color: #34d399; }
+.tg.IT { background: rgba(239, 68, 68, 0.1); color: #f87171; }
+.tg.GST { background: rgba(245, 158, 11, 0.1); color: #fbbf24; }
+.tg.LAW { background: rgba(59, 130, 246, 0.1); color: #60a5fa; }
+.tg.COST { background: rgba(168, 85, 247, 0.1); color: #c084fc; }
+.tg.AUD { background: rgba(236, 72, 153, 0.1); color: #f472b6; }
+.tg.MSM { background: rgba(20, 184, 166, 0.1); color: #2dd4bf; }
+.tg.REV { background: var(--panel-border); color: var(--text-dim); }
+
+.ca { background: rgba(16, 185, 129, 0.1) !important; color: #34d399 !important; border-radius: 8px;}
+.ci { background: rgba(239, 68, 68, 0.1) !important; color: #f87171 !important; border-radius: 8px;}
+.cg { background: rgba(245, 158, 11, 0.1) !important; color: #fbbf24 !important; border-radius: 8px;}
+.cl { background: rgba(59, 130, 246, 0.1) !important; color: #60a5fa !important; border-radius: 8px;}
+.cc { background: rgba(168, 85, 247, 0.1) !important; color: #c084fc !important; border-radius: 8px;}
+.cau { background: rgba(236, 72, 153, 0.1) !important; color: #f472b6 !important; border-radius: 8px;}
+.cm { background: rgba(20, 184, 166, 0.1) !important; color: #2dd4bf !important; border-radius: 8px;}
+.cr { background: var(--panel-border) !important; color: var(--text-dim) !important; border-radius: 8px; }
+
+/* Sunday Timeline */
+.sun-wrap { background: var(--bg); border: 1px solid var(--panel-border); border-radius: var(--radius-md); padding: 24px; }
+.sun-wrap h3 { font-size: 14px; margin: 0 0 20px; color: var(--text-main); font-weight: 800; }
+.sun-grid { display: flex; flex-direction: column; gap: 16px; }
+.sun-item { display: flex; gap: 16px; align-items: flex-start; font-size: 13px; }
+.sun-time { width: 60px; font-weight: 700; color: var(--text-dim); flex-shrink: 0; padding-top: 10px; }
+.sun-act { background: var(--panel); border: 1px solid var(--panel-border); padding: 12px 16px; border-radius: var(--radius-md); flex: 1; font-weight: 500; color: var(--text-main); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+
+/* Tips */
+.tips { display: flex; flex-direction: column; gap: 24px; }
+.tip { display: flex; gap: 16px; align-items: flex-start; }
+.tip .num { 
+  width: 32px; height: 32px; flex-shrink: 0; background: rgba(99, 102, 241, 0.1); color: #818cf8; 
+  border-radius: 50%; display: grid; place-items: center; font-weight: 800; font-size: 14px; border: 1px solid rgba(99, 102, 241, 0.3);
+}
+.tip h4 { margin: 0 0 6px 0; font-size: 14px; color: var(--text-main); font-weight: 700; }
+.tip p { margin: 0; color: var(--text-dim); font-size: 13px; line-height: 1.6; }
+
+/* Milestones */
+.ms { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
+.mcard { background: var(--bg); border: 1px solid var(--panel-border); padding: 20px; border-radius: var(--radius-md); transition: 0.2s; }
+.mcard:hover { border-color: rgba(99, 102, 241, 0.4); box-shadow: 0 4px 20px var(--accent-glow); transform: translateY(-2px); }
+.mcard small { display: block; font-size: 11px; color: #818cf8; font-weight: 800; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em; }
+.mcard h3 { font-size: 15px; font-weight: 800; color: var(--text-main); margin: 0 0 8px; }
+.mcard .hint { font-size: 12px; color: var(--text-dim); margin: 0; line-height: 1.5; }
+
+/* Deep Analysis Water Tank */
+.liveme { display: flex; flex-wrap: wrap; gap: 16px; margin-bottom: 24px; width: 100%; }
+
+
+
+
+
+
+.wfill { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(0deg, #3b82f6, #8b5cf6); height: 50%; transition: height 1s cubic-bezier(0.4, 0, 0.2, 1); }
+.wwave { position: absolute; top: -10px; left: -200%; right: -200%; height: 20px; background: rgba(255,255,255,0.15); border-radius: 50%; animation: wave 4s infinite linear; }
+.wwave.w2 { top: -8px; background: rgba(59, 130, 246, 0.3); animation: wave 5s infinite linear reverse; }
+
+/* Verdict Log Analysis */
+.verdict { padding: 20px; border-radius: var(--radius-md); margin-bottom: 24px; border: 1px solid var(--panel-border); background: var(--bg); }
+.verdict h3 { margin: 0 0 8px; font-size: 15px; font-weight: 800; }
+.verdict p { margin: 0; font-size: 13px; color: var(--text-dim); line-height: 1.5; }
+.verdict.wait { border-color: var(--panel-border); }
+.verdict.good { border-color: rgba(16, 185, 129, 0.3); background: rgba(16, 185, 129, 0.05); }
+.verdict.good h3 { color: #34d399; }
+.verdict.mid { border-color: rgba(245, 158, 11, 0.3); background: rgba(245, 158, 11, 0.05); }
+.verdict.mid h3 { color: #fbbf24; }
+.verdict.bad { border-color: rgba(239, 68, 68, 0.3); background: rgba(239, 68, 68, 0.05); }
+.verdict.bad h3 { color: #f87171; }
+.verdict .v-top { margin-bottom: 10px; }
+.verdict .pace-cat {
+  display: inline-block; font-size: 11px; font-weight: 800;
+  padding: 5px 12px; border-radius: 999px; letter-spacing: 0.06em; text-transform: uppercase;
+}
+.pace-cat.cat-best    { background: rgba(16,185,129,0.18); color: #34d399; border: 1px solid rgba(16,185,129,0.4); }
+.pace-cat.cat-better  { background: rgba(16,185,129,0.12); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.3); }
+.pace-cat.cat-good    { background: rgba(56,189,248,0.14); color: #38bdf8; border: 1px solid rgba(56,189,248,0.35); }
+.pace-cat.cat-moderate{ background: rgba(245,158,11,0.14);  color: #fbbf24; border: 1px solid rgba(245,158,11,0.35); }
+.pace-cat.cat-poor    { background: rgba(239,68,68,0.16);   color: #f87171; border: 1px solid rgba(239,68,68,0.4); }
+.verdict .pace-warn {
+  margin-top: 12px !important; padding: 10px 12px; border-radius: 8px;
+  background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.3);
+  color: #fbbf24 !important; font-weight: 600; font-size: 13px; line-height: 1.5;
+}
+
+.log-head { display: flex; flex-wrap: wrap; gap: 16px; margin-bottom: 24px; align-items: center; }
+.log-head label { font-size: 13px; font-weight: 600; color: var(--text-main); display: flex; align-items: center; gap: 12px; }
+.log-head input { background: #000; border: 1px solid var(--panel-border); padding: 8px 16px; border-radius: 8px; outline: none; color: var(--text-main); font-family: inherit; font-size: 14px; }
+.log-head input::-webkit-calendar-picker-indicator { filter: invert(1); opacity: 0.6; cursor: pointer; }
+
+/* Today Board */
+.todaybox .row { display: flex; align-items: flex-start; gap: 16px; padding: 16px; background: var(--bg); border-radius: var(--radius-md); margin-bottom: 12px; border: 1px solid var(--panel-border); transition: 0.2s; }
+.todaybox .row:hover { border-color: var(--text-dim); }
+.todaybox .row.now { border-color: rgba(99, 102, 241, 0.4); background: rgba(99, 102, 241, 0.05); box-shadow: 0 4px 20px var(--accent-glow); }
+.todaybox .row time { font-size: 13px; color: #818cf8; font-weight: 700; width: 60px; flex-shrink: 0; }
+.todaybox .row div { font-size: 13px; color: var(--text-main); line-height: 1.5; }
+.tboard .sch { margin-bottom: 24px; }
+.tboard .sch h4 { font-size: 14px; color: var(--text-dim); margin-bottom: 12px; border-bottom: 1px solid var(--panel-border); padding-bottom: 8px; }
+.tboard .sch .row { padding: 16px; background: var(--bg); border: 1px solid var(--panel-border); border-radius: var(--radius-md); display: flex; gap: 16px; margin-bottom: 8px; transition: 0.2s; }
+.tboard .sch.now .row { border-color: rgba(16, 185, 129, 0.4); background: rgba(16, 185, 129, 0.05); }
+
+/* Overlays */
+.prestrip, .histstrip { background: var(--accent); color: #fff; padding: 12px; text-align: center; font-size: 13px; font-weight: 600; letter-spacing: 0.02em; }
+.island { position: fixed; top: 24px; left: 50%; transform: translate(-50%, -100px); background: #fff; border-radius: 999px; padding: 14px 28px; font-size: 14px; font-weight: 700; color: #000; opacity: 0; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); z-index: 9999; box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
+.island.on { transform: translate(-50%, 0); opacity: 1; }
+
+.task-list { display: flex; flex-direction: column; gap: 12px; }
+.task { display: flex; }
+.pace { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+.pace div { padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 600; background: var(--panel-border); color: var(--text-main); }
+
+
+/* Dynamic Island for 10:30 PM Verify */
+.nightask {
+  position: fixed; top: 24px; left: 50%; transform: translateX(-50%) translateY(-100px);
+  background: rgba(18, 18, 20, 0.95); border: 1px solid rgba(99, 102, 241, 0.3);
+  box-shadow: 0 10px 40px rgba(0,0,0,0.8), 0 0 20px rgba(99, 102, 241, 0.2);
+  border-radius: 24px; padding: 20px 24px; z-index: 10000;
+  display: flex; flex-direction: column; align-items: center; gap: 16px;
+  opacity: 0; pointer-events: none; transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(10px);
+}
+.nightask.on {
+  transform: translateX(-50%) translateY(0); opacity: 1; pointer-events: auto;
+}
+.nightask p { margin: 0; color: #f4f4f5; font-size: 14px; font-weight: 600; }
+.nightask div { display: flex; gap: 12px; }
+.nightask button {
+  background: #18181b; border: 1px solid #27272a; color: #a1a1aa; padding: 8px 16px;
+  border-radius: 999px; font-size: 13px; font-weight: 600; cursor: pointer; transition: 0.2s;
+}
+.nightask button:hover { background: #27272a; color: #f4f4f5; }
+.nightask button#nightYes { background: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.3); color: #34d399; }
+.nightask button#nightYes:hover { background: rgba(16, 185, 129, 0.2); }
+.nightask button#nightSelConfirm { background: rgba(245, 158, 11, 0.12); border-color: rgba(245, 158, 11, 0.35); color: #fbbf24; }
+.nightask button#nightSelConfirm:hover { background: rgba(245, 158, 11, 0.22); }
+#nightAskS { align-items: stretch; width: 100%; }
+#nightTaskList { display: flex; flex-direction: column; gap: 6px; max-height: 220px; overflow-y: auto; width: 100%; align-items: stretch; }
+/* Sunday selection task rows */
+.night-task {
+  display: flex; align-items: center; gap: 10px;
+  background: #18181b; border: 1px solid #27272a;
+  border-radius: 10px; padding: 10px 12px;
+  font-size: 13px; color: #e4e4e7; cursor: pointer;
+  user-select: none; transition: 0.15s;
+}
+.night-task:hover { border-color: #3f3f46; }
+.night-task input { accent-color: #f59e0b; cursor: pointer; flex-shrink: 0; width: 16px; height: 16px; }
+.night-task.done .tlabel { text-decoration: line-through; color: #71717a; }
+.night-task .tlabel { flex: 1; line-height: 1.4; }
+.night-task .tbadge { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 999px; flex-shrink: 0; }
+.night-task .tbadge.doneb { background: rgba(16,185,129,0.15); color: #34d399; }
+.night-task .tbadge.missb { background: rgba(239,68,68,0.15); color: #f87171; }
+.night-task .tbadge.sank { background: rgba(99,102,241,0.15); color: #818cf8; }
+.night-task.disabled { opacity: 0.55; cursor: not-allowed; }
+
+
+.nudge { display: none !important; }
+
+/* ── Floating circular verify bubble (bottom-right) ── */
+.verify-bubble {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #6366f1 0%, #7c3aed 100%);
+  border: 2px solid rgba(255,255,255,0.25);
+  box-shadow: 0 8px 30px rgba(99,102,241,0.6);
+  color: #fff;
+  font-size: 26px;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  z-index: 9990;
+  user-select: none;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.verify-bubble:hover {
+  transform: scale(1.1);
+  box-shadow: 0 12px 40px rgba(99,102,241,0.8);
+}
+.verify-bubble:active { transform: scale(0.95); }
+.verify-bubble .tip {
+  position: absolute;
+  right: 78px;
+  background: rgba(18,18,20,0.95);
+  border: 1px solid rgba(99,102,241,0.35);
+  color: #f4f4f5;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  padding: 6px 12px;
+  border-radius: 999px;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(6px);
+  transition: 0.2s;
+}
+.verify-bubble:hover .tip { opacity: 1; transform: translateX(0); }
+
+/* ── Full-screen red "not yet" blocker ── */
+.time-block {
+  position: fixed; inset: 0; z-index: 200000;
+  background: #b91c1c;
+  background: radial-gradient(circle at 50% 40%, #ef4444 0%, #b91c1c 65%, #7f1d1d 100%);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 24px; text-align: center;
+  box-shadow: inset 0 0 120px rgba(0,0,0,0.6);
+  animation: blockIn 0.4s ease-out;
+}
+@keyframes blockIn { from { transform: scale(0.96); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.time-block .tb-icon { font-size: 80px; line-height: 1; filter: drop-shadow(0 6px 20px rgba(0,0,0,0.4)); }
+.time-block .tb-title { font-size: 30px; font-weight: 900; color: #fff; letter-spacing: -0.02em; }
+.time-block .tb-msg { font-size: 16px; color: #fecaca; max-width: 420px; line-height: 1.6; font-weight: 500; }
+.time-block .tb-time { font-size: 20px; font-weight: 800; color: #ffb4b4; padding: 8px 20px; border: 2px dashed rgba(255,255,255,0.4); border-radius: 999px; }
+.time-block button {
+  background: #fff; color: #991b1b; border: none;
+  padding: 12px 36px; border-radius: 999px;
+  font-size: 16px; font-weight: 800; cursor: pointer;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.time-block button:hover { transform: scale(1.05); box-shadow: 0 12px 30px rgba(0,0,0,0.45); }
+
+/* Sunday Graph Archive Overlay */
+.sy-ov {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8);
+  display: flex; justify-content: center; align-items: center; z-index: 10000;
+  opacity: 0; pointer-events: none; transition: 0.3s; backdrop-filter: blur(8px);
+}
+.sy-ov.open { opacity: 1; pointer-events: auto; }
+.sy-box {
+  background: var(--bg); border: 1px solid var(--panel-border); border-radius: var(--radius-lg);
+  width: 90%; max-width: 800px; max-height: 90vh; overflow-y: auto; padding: 32px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+}
+.sy-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; border-bottom: 1px solid var(--panel-border); padding-bottom: 16px; }
+.sy-top h2 { font-size: 20px; font-weight: 800; color: var(--text-main); margin: 0 0 4px 0; }
+.sy-top .hint { margin: 0; color: var(--text-dim); font-size: 13px; }
+.xbtn {
+  background: var(--panel); border: 1px solid var(--panel-border); color: var(--text-dim);
+  width: 32px; height: 32px; border-radius: 8px; font-weight: 800; cursor: pointer; display: grid; place-items: center;
+}
+.xbtn:hover { background: var(--panel-border); color: var(--text-main); }
+#sunGraphBody { color: var(--text-main); font-size: 14px; }
+#sunGraphBody h3 { margin: 24px 0 12px; font-size: 15px; border-top: 1px solid var(--panel-border); padding-top: 16px; }
+#sunGraphBody p { margin: 8px 0; color: var(--text-dim); }
+
+/* Live Speed Graph */
+.speedbox { background: var(--bg); border: 1px solid var(--panel-border); border-radius: var(--radius-md); padding: 24px; margin-top: 24px; }
+.speedbox h2 { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+.speedbox .hint { margin-bottom: 16px; color: var(--text-dim); }
+
+/* SVG Graph colors (override the inline orange) */
+#sunGraphBody polyline, .speedbox polyline { stroke: var(--accent) !important; }
+#sunGraphBody circle, .speedbox circle { fill: var(--success) !important; }
+
+
+
+/* Grid Redesign (Roz Ka Clock) */
+#clock .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; width: 100%; }
+#clock .sch {
+  background: var(--panel); 
+  border: 1px solid var(--panel-border); 
+  border-radius: 12px; 
+  padding: 0 0 12px 0; 
+  margin: 0 !important;
+  border-left: none !important;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+#clock .sch::before { display: none !important; }
+#clock .sch h4 {
+  padding: 12px 16px !important; 
+  margin: 0 0 12px 0 !important; 
+  font-size: 13px !important; 
+  font-weight: 700; 
+  border-bottom: none !important;
+  color: var(--text-main) !important;
+}
+#clock .sch h4.h-wake { background: rgba(56, 189, 248, 0.15); }
+#clock .sch h4.h-acc { background: rgba(129, 140, 248, 0.15); }
+#clock .sch h4.h-it { background: rgba(244, 63, 94, 0.15); }
+#clock .sch h4.h-gst { background: rgba(16, 185, 129, 0.15); }
+#clock .sch h4.h-law, #clock .sch h4.h-cost { background: rgba(245, 158, 11, 0.15); }
+#clock .sch h4.h-aud, #clock .sch h4.h-msm, #clock .sch h4.h-eve { background: rgba(217, 70, 239, 0.15); }
+
+#clock .sch .row {
+  display: flex; 
+  gap: 16px; 
+  padding: 6px 16px !important; 
+  margin: 0 !important; 
+  background: transparent !important; 
+  border: none !important;
+  border-radius: 0 !important;
+}
+#clock .sch .row time { 
+  font-size: 13px !important; 
+  color: #22d3ee !important; 
+  font-weight: 700; 
+  width: 44px; 
+  flex-shrink: 0; 
+}
+#clock .sch .row div { 
+  font-size: 13px !important; 
+  color: #e2e8f0 !important; 
+  line-height: 1.5; 
+}
+#clock .sch .row:hover { background: transparent !important; }
+
+#clock .tabs { display: flex; gap: 8px; margin: 16px 0; }
+#clock .tab { 
+  background: transparent; border: 1px solid var(--panel-border); color: var(--text-dim); 
+  padding: 6px 16px; border-radius: 99px; font-size: 13px; font-weight: 600; cursor: pointer; transition: 0.2s;
+}
+#clock .tab.on { 
+  background: #8b5cf6; border-color: #8b5cf6; color: #fff; 
+}
+
+/* Sidebar Tasks Timeline Redesign */
+.task-list { padding-left: 12px; margin-top: 16px; }
+.task { position: relative; padding-left: 28px; padding-bottom: 24px; border-left: 2px solid var(--panel-border); margin-bottom: 0 !important; }
+.task:last-child { border-left-color: transparent; padding-bottom: 0; }
+.task::before {
+  content: ""; position: absolute; left: -7px; top: 12px; width: 12px; height: 12px;
+  background: var(--bg); border: 2px solid var(--text-dim); border-radius: 50%; transition: 0.3s;
+}
+.task.ok::before { border-color: var(--success) !important; box-shadow: 0 0 10px rgba(16, 185, 129, 0.4) !important; background: var(--success) !important; }
+.task .bub {
+  width: 100%; text-align: left; padding: 12px 16px !important; background: transparent !important; border: 1px solid var(--panel-border) !important; 
+  border-radius: var(--radius-md) !important; color: var(--text-dim) !important; transition: 0.2s; font-size: 13px !important; font-weight: 500;
+  display: flex; align-items: flex-start; gap: 12px; line-height: 1.5; margin: 0 !important;
+}
+.task .bub:hover { background: var(--panel) !important; border-color: rgba(255,255,255,0.1) !important; }
+.task.ok .bub { border-color: rgba(16, 185, 129, 0.3) !important; background: rgba(16, 185, 129, 0.05) !important; color: var(--text-main) !important; }
+.task .bub .dot { display: none !important; }
+
+
+/* Floating Pill Nav */
+.pill-nav {
+  display: flex;
+  align-items: center;
+  background: #171717;
+  border-radius: 999px;
+  padding: 6px 6px 6px 6px;
+  gap: 32px;
+  box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5);
+  border: 1px solid rgba(255,255,255,0.05);
+}
+.pill-icon {
+  width: 36px;
+  height: 36px;
+  background: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #000;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.pill-links {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+.pill-link {
+  color: #a3a3a3;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  transition: 0.2s;
+  display: flex;
+  align-items: center;
+}
+.pill-link:hover { color: #fff; }
+
+.pill-btn {
+  background: #fff;
+  color: #000;
+  padding: 8px 20px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.pill-btn:hover { background: #e5e5e5; }
+
+
+/* Live Timeline Styles for TodayBoard */
+#todayBoard { margin-top: 24px; }
+#todayBoard .tboard { display: flex; flex-direction: column; gap: 0; position: relative; padding-left: 16px; margin-left: 8px; }
+#todayBoard .tboard::before { content: ""; position: absolute; left: 0; top: 16px; bottom: 16px; width: 2px; background: var(--panel-border); }
+#todayBoard .sch { position: relative; padding-left: 32px; padding-bottom: 24px; }
+#todayBoard .sch:last-child { padding-bottom: 0; }
+#todayBoard .sch::before {
+  content: ""; position: absolute; left: -5px; top: 4px; width: 12px; height: 12px;
+  background: var(--bg); border: 2px solid var(--text-dim); border-radius: 50%; transition: 0.3s;
+}
+#todayBoard .sch.now::before {
+  border-color: var(--accent); background: var(--accent);
+  box-shadow: 0 0 12px var(--accent-glow);
+}
+#todayBoard .sch h4 { font-size: 15px; font-weight: 700; color: var(--text-dim); margin: 0 0 8px 0; transition: 0.3s; }
+#todayBoard .sch .row { display: flex; gap: 12px; font-size: 14px; color: var(--text-dim); align-items: flex-start; transition: 0.3s; }
+#todayBoard .sch .row time { font-weight: 600; color: #a3a3a3; width: 44px; flex-shrink: 0; }
+#todayBoard .sch .row div { line-height: 1.4; }
+
+/* Highlight Current Slot */
+#todayBoard .sch.now h4 { color: #fff; font-size: 16px; }
+#todayBoard .sch.now .row time { color: #22d3ee; }
+#todayBoard .sch.now .row div { color: #f8fafc; font-weight: 500; }
+
+
+/* Ultra-Modern Deep Analysis UI */
+.deepgrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+  margin-top: 24px;
+}
+.dcard {
+  background: linear-gradient(145deg, rgba(30,41,59,0.4), rgba(15,23,42,0.8));
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 24px;
+  padding: 32px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  box-shadow: 0 15px 35px -5px rgba(0,0,0,0.5);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(12px);
+  position: relative;
+  overflow: hidden;
+}
+.dcard::before {
+  content: ""; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+}
+.dcard:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 25px 50px -12px rgba(0,0,0,0.7), 0 0 30px rgba(56, 189, 248, 0.15);
+  border-color: rgba(255,255,255,0.15);
+}
+.dcard.dwide {
+  grid-column: 1 / -1;
+}
+.dcard h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #f8fafc;
+  margin-bottom: 24px;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  width: 100%;
+}
+.dcard .big {
+  font-size: 48px;
+  font-weight: 900;
+  background: linear-gradient(135deg, #fff, #94a3b8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  line-height: 1;
+  text-shadow: 0 10px 20px rgba(0,0,0,0.5);
+  margin-bottom: 8px;
+}
+.dcard .sub {
+  font-size: 13px;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+  width: 100%;
+  margin-top: 16px;
+}
+
+/* Modern Waterbox */
+
+.waterbox::before {
+  content: ""; position: absolute; inset: 0; background: radial-gradient(circle at top right, rgba(56, 189, 248, 0.15), transparent 60%); pointer-events: none;
+}
+
+
+
+
+
+
+/* Modern LiveMe Grid */
+.lgrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 16px;
+  margin: 24px 0 32px 0;
+}
+.lcell {
+  background: rgba(30,41,59,0.3);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 20px;
+  padding: 24px 16px;
+  text-align: center;
+  transition: 0.3s;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+}
+.lcell:hover {
+  background: rgba(30,41,59,0.6);
+  transform: translateY(-4px);
+  border-color: rgba(255,255,255,0.15);
+  box-shadow: 0 15px 30px rgba(0,0,0,0.4);
+}
+.lcell em { display: block; font-size: 12px; color: #94a3b8; font-style: normal; text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em; margin-bottom: 12px; }
+.lcell b { display: block; font-size: 32px; font-weight: 800; color: #fff; margin-bottom: 12px; text-shadow: 0 4px 15px rgba(255,255,255,0.15); }
+.lcell em:last-child { margin-bottom: 0; color: #64748b; font-size: 11px; }
+
+#liveMe > h3 { font-size: 24px; color: #f8fafc; display: flex; align-items: center; gap: 16px; margin-bottom: 32px; font-weight: 800; }
+.pulse { width: 14px; height: 14px; background: #22c55e; border-radius: 50%; box-shadow: 0 0 0 0 rgba(34,197,94,0.7); animation: greenPulse 2s infinite; }
+@keyframes greenPulse { 0% { box-shadow: 0 0 0 0 rgba(34,197,94,0.7); } 70% { box-shadow: 0 0 0 15px rgba(34,197,94,0); } 100% { box-shadow: 0 0 0 0 rgba(34,197,94,0); } }
+
+.lpapers { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 32px; justify-content: center; }
+.lpapers .tg { padding: 8px 16px; font-size: 13px; font-weight: 600; border-radius: 99px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); }
+.lleg { margin-top: 24px; display: flex; justify-content: center; gap: 16px; }
+.lleg span { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #94a3b8; }
+.lleg i { display: inline-block; width: 12px; height: 12px; border-radius: 50%; }
+
+
+/* Restored Waterbox UI */
+.waterbox {
+  background: linear-gradient(135deg, rgba(15,23,42,0.8), rgba(2,6,23,0.95));
+  border: 1px solid rgba(56, 189, 248, 0.15);
+  border-radius: 32px;
+  padding: 40px 48px;
+  display: flex;
+  gap: 40px;
+  align-items: center;
+  margin-bottom: 40px;
+  box-shadow: 0 20px 50px -10px rgba(0,0,0,0.7), inset 0 0 40px rgba(56, 189, 248, 0.05);
+  position: relative;
+  overflow: hidden;
+}
+.waterbox::before {
+  content: ""; position: absolute; inset: 0; background: radial-gradient(circle at top right, rgba(56, 189, 248, 0.15), transparent 60%); pointer-events: none;
+}
+.waterlab { flex: 1; position: relative; z-index: 2; }
+.waterlab em {
+  font-size: 15px;
+  color: #38bdf8;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  display: block; margin-bottom: 12px;
+}
+.waterlab b {
+  font-size: 64px;
+  font-weight: 900;
+  background: linear-gradient(to right, #ffffff, #cbd5e1);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  line-height: 1;
+  display: block; margin-bottom: 16px;
+  text-shadow: 0 10px 30px rgba(56, 189, 248, 0.2);
+}
+.waterlab span { font-size: 15px; color: #64748b; font-weight: 500; }
+.wtank {
+  width: 110px;
+  height: 180px;
+  border-radius: 20px 20px 36px 36px;
+  border: 4px solid rgba(255,255,255,0.1);
+  box-shadow: 0 0 40px rgba(0,0,0,0.8), inset 0 0 30px rgba(56, 189, 248, 0.15);
+  position: relative;
+  overflow: hidden;
+  background: #000;
+  flex-shrink: 0;
+  z-index: 2;
+}
+
+#liveMe { display: block !important; }
+
+/* Modern Footer Design */
+.modern-footer { margin-top: 60px; margin-bottom: 24px; }
+.footer-glass {
+  background: linear-gradient(145deg, rgba(30,41,59,0.5), rgba(15,23,42,0.8));
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 32px; padding: 48px; text-align: center;
+  box-shadow: 0 20px 40px -10px rgba(0,0,0,0.6);
+  position: relative; overflow: hidden;
+}
+.footer-glass::before {
+  content: ""; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+  background: radial-gradient(circle, rgba(168,85,247,0.05) 0%, transparent 60%);
+  pointer-events: none; z-index: 0;
+}
+.footer-glass > * { position: relative; z-index: 1; }
+.ft-head { display: flex; align-items: center; justify-content: center; gap: 16px; margin-bottom: 12px; }
+.ft-head h3 { font-size: 28px; font-weight: 800; color: #fff; margin: 0; letter-spacing: -0.02em; }
+.ft-head .badge { background: linear-gradient(135deg, #38bdf8, #818cf8); color: #fff; font-size: 11px; font-weight: 800; padding: 6px 12px; border-radius: 99px; text-transform: uppercase; letter-spacing: 0.1em; }
+.ft-tagline { font-size: 15px; color: #94a3b8; font-weight: 500; margin-bottom: 40px; }
+
+.ft-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; margin-bottom: 40px; }
+.ft-card {
+  background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 20px; padding: 20px 24px; min-width: 140px;
+  transition: transform 0.3s, background 0.3s;
+}
+.ft-card:hover { transform: translateY(-5px); background: rgba(255,255,255,0.06); }
+.ft-card b { display: block; font-size: 32px; font-weight: 900; color: #f8fafc; margin-bottom: 4px; }
+.ft-card span { font-size: 12px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; }
+
+.ft-path { display: flex; align-items: center; justify-content: center; max-width: 800px; margin: 0 auto 40px auto; flex-wrap: wrap; gap: 12px; }
+.path-step { background: rgba(15,23,42,0.6); border: 1px solid rgba(255,255,255,0.05); padding: 12px 24px; border-radius: 16px; font-size: 14px; color: #cbd5e1; font-weight: 500; }
+.path-step span { color: #a855f7; font-weight: 800; margin-right: 8px; }
+.path-line { flex: 1; height: 2px; background: rgba(255,255,255,0.05); min-width: 20px; }
+
+.ft-quote { font-size: 18px; font-weight: 600; color: #38bdf8; font-style: italic; opacity: 0.9; }
+
+
+/* Modern pill links */
+.pill-link {
+  color: #a3a3a3;
+  font-size: 15px;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.3s, transform 0.2s;
+}
+.pill-link:hover {
+  color: #38bdf8; /* bright cyan */
+  transform: scale(1.07);
+}
+/* Focus Timer Modal */
+#pomoModal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(15,23,42,0.96);
+  backdrop-filter: blur(8px);
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  border-radius: 12px;
+  animation: fadeIn 0.3s ease-out;
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+#pomoTimer {
+  font-family: 'Inter', sans-serif;
+  background: linear-gradient(135deg, #38bdf8, #818cf8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+/* Buttons */
+.pomo-btn {
+  padding: 14px 28px;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s, background 0.2s;
+}
+.pomo-btn:hover { transform: scale(1.05); }
+.pomo-start { background: #22c55e; color: #fff; border: none; }
+.pomo-break { background: #f5b942; color: #fff; border: none; }
+.pomo-close { background: transparent; border: 1px solid rgba(255,255,255,0.2); color: #fff; }
+
+
+/* Nightly reminder toast */
+#nightToast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: rgba(255,165,0,0.95); /* orange */
+  color: #111;
+  padding: 12px 20px;
+  border-radius: 12px;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  z-index: 10000;
+  display: none;
+  animation: slideIn 0.4s forwards;
+}
+@keyframes slideIn { from {opacity:0; transform:translateX(100%);} to {opacity:1; transform:translateX(0);} }
+
+
+
+/* ── Fix pass: missing component styles ── */
+:root { --radius-sm: 6px; --success-glow: rgba(16,185,129,0.4); }
+
+/* Timetable tabs (Daily / Weekly mix / Sunday) */
+.panel { display: none; }
+.panel.on { display: block; }
+
+/* Ping toast */
+.toast {
+  position: fixed; bottom: 24px; left: 50%; transform: translate(-50%, 16px);
+  background: #10b981; color: #04231a; font-weight: 700; font-size: 14px;
+  padding: 10px 20px; border-radius: 999px; opacity: 0; pointer-events: none;
+  transition: 0.3s; z-index: 10001; box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+}
+.toast.on { opacity: 1; transform: translate(-50%, 0); }
+
+/* Today split layout + color swatches */
+.today-split { display: flex; gap: 24px; flex-wrap: wrap; align-items: flex-start; }
+.today-split .todaybox { flex: 1; min-width: 260px; }
+.today-split .colorkey { flex-shrink: 0; margin: 0; }
+.sw { width: 14px; height: 14px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
+.sw.acc { background: #34d399; } .sw.it { background: #f87171; }
+.sw.gst { background: #fbbf24; } .sw.law { background: #60a5fa; }
+.sw.cost { background: #c084fc; } .sw.aud { background: #f472b6; }
+.sw.msm { background: #2dd4bf; } .sw.rev { background: #94a3b8; }
+
+.chip {
+  font-size: 12px; font-weight: 600; color: var(--text-dim);
+  background: var(--bg); border: 1px solid var(--panel-border);
+  padding: 6px 12px; border-radius: 999px;
+}
+.daycard h3 { font-size: 15px; margin: 0 0 12px; }
+.ob { background: var(--bg); border: 1px solid var(--panel-border); border-radius: var(--radius-md); padding: 16px 20px; margin-bottom: 16px; }
+
+/* Subject card chapter folds */
+.subfold { border-top: 1px solid var(--panel-border); margin-top: 16px; }
+.subfold summary.shead { cursor: pointer; font-size: 13px; font-weight: 600; color: #818cf8; padding: 10px 0; list-style: none; }
+.subfold summary.shead::-webkit-details-marker { display: none; }
+.mod h4 { font-size: 12px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.05em; margin: 16px 0 8px; }
+.weak-tag { background: rgba(239,68,68,0.15); color: #f87171; font-size: 10px; font-weight: 800; padding: 2px 6px; border-radius: 6px; margin-left: 6px; }
+
+/* Journey / week-report cards */
+.sunrep { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; }
+.jcard { background: var(--bg); border: 1px solid var(--panel-border); border-radius: var(--radius-md); padding: 14px 16px; display: flex; flex-direction: column; gap: 2px; min-width: 150px; }
+.jcard em { font-style: normal; font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; }
+.jcard b { font-size: 22px; font-weight: 800; color: var(--text-main); }
+.jcard span { font-size: 11px; color: var(--text-dim); }
+.jcard.ok { border-color: rgba(16,185,129,0.4); } .jcard.ok b { color: #34d399; }
+.jcard.hot { border-color: rgba(245,158,11,0.4); } .jcard.hot b { color: #fbbf24; }
+
+/* Month-wise weekly */
+.wk { margin-bottom: 24px; }
+.wk h4 { font-size: 14px; color: var(--text-main); margin: 0 0 10px; }
+
+/* Syllabus modal content */
+.kicker { font-size: 11px; font-weight: 800; color: #818cf8; text-transform: uppercase; letter-spacing: 0.08em; }
+.sy-paper { border: 1px solid var(--panel-border); border-radius: var(--radius-md); padding: 16px 20px; margin-bottom: 16px; }
+.sy-mod h4 { font-size: 13px; color: #38bdf8; margin: 12px 0 6px; }
+.sy-mod ol { margin: 0 0 8px 18px; padding: 0; color: var(--text-dim); font-size: 13px; line-height: 1.7; }
+
+/* Week chart states */
+.wday.sunish { background: rgba(16,185,129,0.08); }
+.wday.today { border-color: rgba(99,102,241,0.6); box-shadow: 0 0 12px var(--accent-glow); }
+
+/* Print sheet: screen pe chhupa, print pe dikhe */
+.print-only { display: none; }
+@media print { .print-only { display: block; } }
+
+/* Bell span ab pill-nav text link hai, purana gol button nahi */
+#btnNotify { background: transparent; border: none; border-radius: 0; width: auto; height: auto; }
+#btnNotify:hover { background: transparent; }
+
+body { padding-top: 0; /* removed extra space */ }
+
+</style>
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+</head>
+<body>
+  <!-- Flip-Tile Draggable Clock -->
+  <div class="digi-clock-bar" id="floatClock">
+    <!-- Drag handle -->
+    <div class="clk-handle" title="Drag to move">
+      <span><i></i><i></i></span>
+      <span><i></i><i></i></span>
+      <span><i></i><i></i></span>
+    </div>
+    <!-- Hours -->
+    <div class="clk-group">
+      <div class="clk-tiles">
+        <div class="clk-tile" id="clkH1">0</div>
+        <div class="clk-tile" id="clkH2">0</div>
+      </div>
+      <span class="clk-label">hours</span>
+    </div>
+    <span class="clk-colon">:</span>
+    <!-- Minutes -->
+    <div class="clk-group">
+      <div class="clk-tiles">
+        <div class="clk-tile" id="clkM1">0</div>
+        <div class="clk-tile" id="clkM2">0</div>
+      </div>
+      <span class="clk-label">minutes</span>
+    </div>
+    <span class="clk-colon">:</span>
+    <!-- Seconds -->
+    <div class="clk-group">
+      <div class="clk-tiles">
+        <div class="clk-tile" id="clkS1">0</div>
+        <div class="clk-tile" id="clkS2">0</div>
+      </div>
+      <span class="clk-label">seconds</span>
+    </div>
+  </div>
+
+
+
+<div id="prestrip" class="prestrip">Yeh planner <b>25 August 2026, 12:00 AM</b> se poori tarah start hoga. Abhi preview chal raha hai. Internet nahi chahiye — date aapke phone/laptop ki ghadi se aayegi.</div>
+<div id="island" class="island" aria-live="polite"><span class="idot"></span><span id="islandTxt">CA Inter · live</span></div>
+<div class="nudge" id="nudge"><span id="nudgeTxt"></span><button type="button" class="x" id="nudgeX">OK</button></div>
+<div id="nightAsk" class="nightask">
+  <!-- Step 1: question -->
+  <div id="nightAskQ">
+    <p><b>10:30 PM verify</b> — aaj ke saare leftover + HW hue?</p>
+    <div>
+      <button type="button" id="nightYes">Haan, complete</button>
+      <button type="button" id="nightNo">Nahi, Sunday pe daal do</button>
+    </div>
+  </div>
+  <!-- Step 2: select which tasks to move to Sunday -->
+  <div id="nightAskS" style="display:none; flex-direction:column; gap:10px; align-items:stretch; width:100%;">
+    <p><b>Tick karo kaunse tasks Sunday pe add karein</b></p>
+    <div id="nightTaskList" style="display:flex; flex-direction:column; gap:6px; max-height:220px; overflow-y:auto;"></div>
+    <div>
+      <button type="button" id="nightSelConfirm">OK, Sunday pe add karo</button>
+      <button type="button" id="nightSelBack">Wapas</button>
+    </div>
+  </div>
+</div>
+
+<button type="button" class="verify-bubble" id="verifyBubble" title="Verify today">
+  ✔
+  <span class="tip">Verify tasks</span>
+</button>
+
+<!-- Full-screen red blocker shown if bubble tapped before 8 PM -->
+<div id="timeBlock" class="time-block" style="display:none;">
+  <div class="tb-icon">⛔</div>
+  <div class="tb-title">Abhi iska time nahi hai</div>
+  <div class="tb-msg">Verify feature sirf raat <b>8:00 PM se</b> khulta hai (default 10:30 PM). Abhi din ka kaam complete karo, phir wapas aao.</div>
+  <div class="tb-time" id="tbTime">—</div>
+  <button type="button" id="tbClose">Theek hai</button>
+</div>
+
+<div class="app-container">
+  <!-- Left Sidebar Navigation -->
+  <aside class="left-sidebar">
+    <div class="brand-icon" id="caLogo" style="cursor:pointer;" title="Syllabus">CA</div>
+    <nav class="side-icons" id="mainNav">
+      <a href="#today" title="Today" class="on">📅</a>
+      <a href="#subsSec" title="Subjects">📚</a>
+      <a href="#clock" title="Timetable">⏰</a>
+      <a href="#log" title="Daily Tasks">✅</a>
+      <a href="#deep" title="Charts">📈</a>
+    </nav>
+  </aside>
+
+  <!-- Main Content Dashboard -->
+  <main class="main-content">
+    <header class="top-header">
+       <div class="greeting">
+          <h1 id="greetingTitle">Good morning, Pawan</h1>
+          <p class="hint">Here is your remaining CA Inter preparation pipeline.</p>
+       </div>
+       <div class="pill-nav">
+          <div class="pill-icon">🪐</div>
+          <div class="pill-links">
+             <span class="pill-link" onclick="openSyl()" style="color:#3dd68c;">🎯 Syllabus Guide</span>
+             <span class="pill-link" onclick="pomoControl('open')" style="color:#4ea8ff;">⏱️ Focus Timer</span>
+             <span class="pill-link" onclick="downloadBackup()" style="color:#f5b942;">💾 Save Backup</span>
+             <span class="pill-link" id="btnNotify" style="cursor:pointer" title="Time pe yaad">Resource</span>
+          </div>
+          <div class="pill-btn">pawan@ca-inter.com</div>
+       </div>
+    </header>
+
+    <!-- Top Stats Cards -->
+    <div class="stats" id="stats"></div>
+
+    <div class="dashboard-grid">
+       <div class="center-col">
+         
+         <div class="white-card">
+           <section id="today">
+             
+    <h2>Pehle ye dekho — agle 7 din</h2>
+    <p class="hint" id="nextHint">Aaj se agle 7 din. List midnight pe khud aage khisakti hai. Right: color = kaunsa subject.</p>
+    <div class="today-split">
+    <div class="todaybox" id="nextdays"></div>
+    <aside class="colorkey" aria-label="Subject color key">
+      <h3>Color = subject</h3>
+      <div class="krow"><span class="sw acc"></span><span class="tg ACC">📗 Accounts</span></div>
+      <div class="krow"><span class="sw it"></span><span class="tg IT">📕 Income Tax</span></div>
+      <div class="krow"><span class="sw gst"></span><span class="tg GST">📙 GST</span></div>
+      <div class="krow"><span class="sw law"></span><span class="tg LAW">📘 Law</span></div>
+      <div class="krow"><span class="sw cost"></span><span class="tg COST">📒 Cost</span></div>
+      <div class="krow"><span class="sw aud"></span><span class="tg AUD">📓 Audit</span></div>
+      <div class="krow"><span class="sw msm"></span><span class="tg MSM">📔 FM &amp; SM</span></div>
+      <div class="krow"><span class="sw rev"></span><span class="tg REV">🔄 Sunday / revision</span></div>
+    </aside>
+    </div>
+
+    <div style="margin-top: 48px; margin-bottom: 48px; background: rgba(30,41,59,0.3); border: 1px solid var(--panel-border); border-radius: var(--radius-lg); padding: 32px;">
+      <h2 id="todayBoardTitle">Aaj ka detailed timetable</h2>
+      <p class="hint">Aaj ki live timeline. Jo slot chal raha hai wo automatically highlight ho jayega.</p>
+      <div id="todayBoard"></div>
+    </div>
+    <section id="clock">
+             
+    <h2>Roz ka clock (Mon–Sat)</h2>
+    <p class="hint">Har class ke turant baad usi subject ka HW. Accounts 1.5 hr, baaki 1 hr.</p>
+    <div class="tabs">
+      <button class="tab on" data-p="d1">Daily</button>
+      <button class="tab" data-p="d2">Weekly mix</button>
+      <button class="tab" data-p="d3">Sunday</button>
+    </div>
+    <div id="d1" class="panel on">
+      <div class="cards">
+        <div class="sch"><h4 class="h-wake">🌅 04:30 · Wake</h4><div class="row"><time>04:30</time><div>Rise, water, stretch. No phone scroll.</div></div></div>
+        <div class="sch"><h4 class="h-acc">📗 Class 1 · Accounts 05:00–08:30</h4>
+          <div class="row"><time>05:00</time><div>Watch leftover lecture @ 1.25× → 2 hr</div></div>
+          <div class="row"><time>07:00</time><div>HW + DPP 1.5 hr (Accounts only)</div></div>
+          <div class="row"><time>08:30</time><div>Done · 3.5 hr</div></div>
+        </div>
+        <div class="sch"><h4 class="h-it">📕 Class 2 · Income Tax 08:30–12:30</h4>
+          <div class="row"><time>08:30</time><div>Watch leftover @ 1× → 2.5 hr</div></div>
+          <div class="row"><time>10:00</time><div>Breakfast 30 min (fixed, overlap)</div></div>
+          <div class="row"><time>11:30</time><div>HW + numericals 1 hr</div></div>
+        </div>
+        <div class="sch"><h4 class="h-gst">📙 Class 3 · GST / Law 12:30–15:10</h4>
+          <div class="row"><time>12:30</time><div>Watch leftover @ 1.5× → 1 hr 40</div></div>
+          <div class="row"><time>14:10</time><div>HW 1 hr</div></div>
+        </div>
+        <div class="sch"><h4 class="h-brk">🍽️ 15:10 · Lunch</h4><div class="row"><time>15:10</time><div>45 min rest</div></div></div>
+        <div class="sch"><h4 class="h-law">📘 Class 4 · Law / Cost 15:50–18:50</h4>
+          <div class="row"><time>15:50</time><div>Watch leftover ~2 hr</div></div>
+          <div class="row"><time>17:50</time><div>HW 1 hr</div></div>
+        </div>
+        <div class="sch"><h4 class="h-aud">📓 Class 5 · Audit / Cost / FM-SM 18:50–20:50</h4>
+          <div class="row"><time>18:50</time><div>Watch leftover ~2 hr</div></div>
+          <div class="row"><time>20:50</time><div>HW after dinner if needed</div></div>
+        </div>
+        <div class="sch"><h4 class="h-eve">🌙 Evening · dinner after 21:00</h4>
+          <div class="row"><time>21:00</time><div>Dinner 40 min</div></div>
+          <div class="row"><time>21:40</time><div>Hobby 1 hr 12 min (non-negotiable)</div></div>
+          <div class="row"><time>22:52</time><div>Quick recap / leftover HW wrap · sleep ~23:20</div></div>
+        </div>
+      </div>
+    </div>
+    <div id="d2" class="panel">
+  <div class="week" id="weeklyMixContainer">
+    <!-- Dynamically generated weekly mix table will go here -->
+  </div>
+  <div class="pace">
+    <div class="ca">📗 Accounts <strong>6 / week</strong></div>
+    <div class="ci">📕 Income Tax <strong>6 / week</strong></div>
+    <div class="cg">📙 GST <strong>3 / week</strong></div>
+    <div class="cl">📘 Law <strong>6 / week</strong></div>
+    <div class="cc">📒 Cost <strong>3 / week</strong></div>
+    <div class="cau">📓 Audit <strong>3 / week</strong></div>
+    <div class="cm">📔 FM &amp; SM <strong>3 / week</strong></div>
+  </div>
+  <p class="hint" style="margin-top:10px">Jab GST / Audit / Law leftover khatam, wahi slot agle leftover paper ko milta hai. Slot reallocation: GST done → Cost extra. Audit done → FM-SM extra. IT done → double Accounts (AS 51). Law done → more Cost.</p>
+</div>
+<div id="d3" class="panel">
+      <div class="sun-wrap">
+        <h3>🔄 SUNDAY — Revision + Catchup Day</h3>
+        <div class="sun-grid">
+          <div class="sun-item"><div class="sun-time">4:30 AM</div><div class="sun-act">📙 Wake Up</div></div>
+          <div class="sun-item"><div class="sun-time">5:00–7:00</div><div class="sun-act">📗 Accounts Revision (2 hrs)</div></div>
+          <div class="sun-item"><div class="sun-time">7:00–8:30</div><div class="sun-act">📕 Income Tax Revision (1.5 hrs)</div></div>
+          <div class="sun-item"><div class="sun-time">8:30–10:00</div><div class="sun-act">📙 GST Revision (1.5 hrs)</div></div>
+          <div class="sun-item"><div class="sun-time">10:00–10:30</div><div class="sun-act">🍳 Breakfast</div></div>
+          <div class="sun-item"><div class="sun-time">10:30–11:30</div><div class="sun-act">📘 Law Revision (1 hr)</div></div>
+          <div class="sun-item"><div class="sun-time">11:30–12:15</div><div class="sun-act">📒 Cost Revision (45 min)</div></div>
+          <div class="sun-item"><div class="sun-time">12:15–1:00</div><div class="sun-act">📓 Audit Revision (45 min)</div></div>
+          <div class="sun-item"><div class="sun-time">1:00–1:45</div><div class="sun-act">🍽️ Lunch (45 min)</div></div>
+          <div class="sun-item"><div class="sun-time">1:45–3:15</div><div class="sun-act">🔄 Catchup Missed Classes (1.5 hrs)</div></div>
+          <div class="sun-item"><div class="sun-time">3:15–4:15</div><div class="sun-act">📔 M&amp;SM Revision (1 hr)</div></div>
+          <div class="sun-item"><div class="sun-time">4:15–5:30</div><div class="sun-act">📝 DPP + Weak Areas Practice</div></div>
+          <div class="sun-item"><div class="sun-time">5:30–6:00</div><div class="sun-act">📋 Next Week Planning</div></div>
+          <div class="sun-item"><div class="sun-time">6:00–7:12</div><div class="sun-act">🎯 Hobby Time (1hr 12min)</div></div>
+          <div class="sun-item"><div class="sun-time">9:00 PM</div><div class="sun-act">🍛 Dinner + Rest</div></div>
+          <div class="sun-item"><div class="sun-time">11:30 PM</div><div class="sun-act">😴 Sleep</div></div>
+        </div>
+      </div>
+    </div>
+  
+           </section>
+
+  
+           </section>
+         </div>
+
+         <div class="white-card">
+           <section id="subsSec">
+             
+    <h2>Subjects · modules · sirf leftover</h2>
+    <p class="hint">Cards band. Chapter leftover kholo → bubble tap = complete. Batch-done locked.</p>
+    <div class="ob">
+      <div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:8px">
+        <strong>Overall chapter ticks</strong>
+        <span id="overall-text" style="color:var(--g);font-weight:700">—</span>
+      </div>
+      <div class="bar" style="height:12px"><i id="overall-bar"></i></div>
+    </div>
+    <div class="subgrid" id="subgrid"></div>
+  
+           </section>
+         </div>
+
+         <div class="white-card">
+           <section id="months">
+             
+    <h2>Month-wise weekly — leftover queue</h2>
+    <p class="hint" id="monHint">Har cell = ek remaining lecture. Done wale queue mein nahi.</p>
+    <div class="tabs" id="mtabs"></div>
+    <div id="mhost"></div>
+  
+           </section>
+         </div>
+         
+         <div class="white-card">
+           <section id="ms">
+             
+    <h2>Achievement milestones</h2>
+    <p class="hint">Aapki file wale finish points + leftover-queue se calculated last class.</p>
+    <div class="ms" id="mshost"></div>
+  
+           </section>
+         </div>
+         
+         <div class="white-card">
+           <section id="summary">
+             
+    <h2>Master summary — aapki file se</h2>
+    <p class="hint" id="sumHint">Total 546 · Done 145 · Remaining 401 · ~1315 study hours leftover (watch + HW).</p>
+    <div class="week"><table>
+      <thead><tr><th>Subject</th><th>Total</th><th>Done</th><th>Left</th><th>Speed</th><th>Time/lec</th><th>Hrs left</th><th>Priority</th><th>Target</th></tr></thead>
+      <tbody id="sumBody">
+        <tr><td>Accounting</td><td>126</td><td>37</td><td><b>89</b></td><td>1.25×</td><td>3.5 hr</td><td>311</td><td>HIGH</td><td>November</td></tr>
+        <tr><td>Law</td><td>98</td><td>41</td><td><b>57</b></td><td>1.5×</td><td>2h 40m</td><td>152</td><td>HIGH</td><td>November</td></tr>
+        <tr><td>GST</td><td>66</td><td>35</td><td><b>31</b></td><td>1.5×</td><td>2h 40m</td><td>83</td><td>FIRST</td><td>Oct end</td></tr>
+        <tr><td>Income Tax</td><td>65</td><td>0</td><td><b>65</b></td><td>1×</td><td>3.5 hr</td><td>228</td><td>HIGH</td><td>November</td></tr>
+        <tr><td>Cost Mgmt</td><td>103</td><td>32</td><td><b>71</b></td><td>1×</td><td>3.5 hr</td><td>248</td><td>DEC</td><td>December</td></tr>
+        <tr><td>Auditing</td><td>31</td><td>0</td><td><b>31</b></td><td>1.25×</td><td>3 hr</td><td>93</td><td>DEC</td><td>December</td></tr>
+        <tr><td>FM &amp; SM</td><td>57</td><td>0</td><td><b>57</b></td><td>1.25×</td><td>3 hr</td><td>171</td><td>DEC</td><td>December</td></tr>
+        <tr><td><b>TOTAL</b></td><td>546</td><td>145</td><td><b>401</b></td><td>—</td><td>—</td><td>~1286</td><td>—</td><td>Dec 2026</td></tr>
+      </tbody>
+    </table></div>
+  
+           </section>
+         </div>
+
+       </div>
+       
+
+         <div class="white-card">
+           <section id="histSection">
+    <div id="histBlock">
+    <div id="histStrip" class="histstrip">Daily snapshot logs <b>25 August 2026, 12:00 AM</b> se official. Abhi preview · device clock.</div>
+    <h3 id="histTitle" style="margin:8px 0 8px;font-size:16px">Daily snapshot</h3>
+    <p class="hint" id="histHint">Har naya din = nayi row. Table neeche badhegi — Deep analysis uske baad shift hoga.</p>
+    <div class="week" ><table>
+      <thead><tr><th>Date</th><th>Type</th><th>Planned leftover lectures</th><th>Tasks done</th><th>Status</th></tr></thead>
+      <tbody id="histBody"></tbody>
+    </table></div>
+    </div>
+           </section>
+         </div>
+
+       <div class="right-col">
+         
+         <div class="white-card">
+           <section id="log">
+             
+    <h2>Days &amp; daily task · update + analysis</h2>
+    <p class="hint">Har din ke 5 leftover lectures + HW tick karo. <b>Raat 12:00 (00:00) ke baad</b> — jab clock 12:01 AM ho — date, weekly chart, analysis aur aaj ke tasks khud naye din pe chale jaate hain. Tab khula chhodoge to bhi. Internet nahi chahiye.</p>
+    <div class="log-head">
+      <div>
+        <button type="button" class="tab" id="prevWeek">← week</button>
+        <button type="button" class="tab on" id="thisWeek">is hafte</button>
+        <button type="button" class="tab" id="nextWeek">week →</button>
+      </div>
+      <label>Date &nbsp;<input type="date" id="logDate"/></label>
+      <span class="chip" id="logLabel">—</span>
+    </div>
+    <p class="hint" id="weekTitle"></p>
+    <div class="wchart" id="wchart"></div>
+    <div class="sunrep" id="sunrep"></div>
+    <div class="stats" id="logStats"></div>
+    <div id="verdict" class="verdict wait"></div>
+    <div class="daycard">
+      <h3 id="taskTitle">Aaj ke tasks</h3>
+      <div id="taskList" class="task-list"></div>
+    </div>
+
+  
+           </section>
+         </div>
+
+         
+         
+         <div class="white-card">
+           <section id="tips">
+             
+    <h2>Golden study tips</h2>
+    <p class="hint">Wahi 10 rules — quality giraye bina jaldi cover.</p>
+    <div class="tips">
+      <div class="tip"><div class="num">1</div><div><h4>Accounts = Slot 1 every day</h4><p class="hint">5 AM fresh mind. 89 leftover + 51 AS sabse heavy. IT khatam hone ke baad double slot Accounts ko.</p></div></div>
+      <div class="tip"><div class="num">2</div><div><h4>Income Tax = daily priority</h4><p class="hint">0 done. 65 × 3.5 hr ≈ 228 hr. Slot 2 roz. Sep–Nov target.</p></div></div>
+      <div class="tip"><div class="num">3</div><div><h4>GST finish first</h4><p class="hint">31 leftover, 53% already done. Oct se pehle band. Ek paper done = motivation.</p></div></div>
+      <div class="tip"><div class="num">4</div><div><h4>Sunday = sacred revision</h4><p class="hint">Missed leftover Sunday pe. Naya binge nahi. Quality ensure.</p></div></div>
+      <div class="tip"><div class="num">5</div><div><h4>Quality over speed</h4><p class="hint">Samajh nahi aaya to dubara dekho. 2× pe concept mat udaao.</p></div></div>
+      <div class="tip"><div class="num">6</div><div><h4>AS chapter = 51 leftover</h4><p class="hint">CH-11 akela module. Nov mein IT free hone ke baad dono slots AS ko.</p></div></div>
+      <div class="tip"><div class="num">7</div><div><h4>Color-code notes</h4><p class="hint">Formula / section · definition · example · exam trap. Revision 3× tez.</p></div></div>
+      <div class="tip"><div class="num">8</div><div><h4>Slot reallocation</h4><p class="hint">GST done → Cost. Audit done → FM-SM. IT done → double Acc. Law done → more Cost.</p></div></div>
+      <div class="tip"><div class="num">9</div><div><h4>Hobby non-negotiable</h4><p class="hint">1 hr 12 min dinner ke baad. Skip mat karo. Fresh mind = retention.</p></div></div>
+      <div class="tip"><div class="num">10</div><div><h4>DPP same day</h4><p class="hint">Accounts 1.5 hr HW, baaki 1 hr. Delay = forget.</p></div></div>
+    </div>
+  
+           </section>
+         </div>
+         
+         <div class="white-card">
+           <section id="deep">
+             
+    <h2>Deep analysis — aapka journey</h2>
+    <p class="hint">Upar wala board <b>har second</b> update. Neeche donuts leftover + daily log se. Chart.js nahi.</p>
+    <div class="liveme" id="liveMe"></div>
+    <div class="waterbox" id="waterBox">
+      <div class="waterlab">
+        <em>Aaj ke hours bache</em>
+        <b id="waterHrs">—</b>
+        <span id="waterSub">12:00 AM pe tank full reset</span>
+      </div>
+      <div class="wtank" aria-hidden="true">
+        <div class="wfill" id="waterFill">
+          <div class="wwave"></div><div class="wwave w2"></div>
+          <div class="wliq"></div>
+          <span class="wbub" style="left:18%"></span>
+          <span class="wbub b2"></span><span class="wbub b3"></span><span class="wbub b4"></span>
+        </div>
+      </div>
+    </div>
+    <div class="deepgrid" id="deepGrid" style="min-height:220px"><p class="hint">Charts load ho rahe hain…</p></div>
+  
+           </section>
+         </div>
+
+       </div>
+    </div>
+  </main>
+</div>
+<div class="sy-ov" id="sunGraphOv">
+  <div class="sy-box">
+    <div class="sy-top">
+      <div>
+        <h2>Sunday · hidden graph archive</h2>
+        <p class="hint" style="margin:4px 0 0">Reset se pehle ka data. Sirf Sunday popup.</p>
+      </div>
+      <button type="button" class="xbtn" id="sunGraphX">×</button>
+    </div>
+    <div id="sunGraphBody"></div>
+  </div>
+</div>
+<div class="toast" id="toast" aria-live="polite"></div>
+<section class="print-only" id="printSheet"></section>
+<section class="speedbox" id="speedBox"><h2>Live speed · on-track?</h2><p class="hint" id="speedHint">Line seedhi = on time. Niche = peeche / tasks skip.</p><svg id="speedSvg" viewBox="0 0 720 200" width="100%" height="200"></svg><div id="speedWarn" class="hint"></div></section>
+<footer class="modern-footer">
+  <div class="footer-glass">
+    <div class="ft-head">
+      <h3>CA Intermediate</h3>
+      <span class="badge">Quality First</span>
+    </div>
+    <p class="ft-tagline" id="ftLine">401 leftover lectures • 7 subjects • 5 classes/day • no rush</p>
+    
+    <div class="ft-grid">
+      <div class="ft-card"><b id="ftLeft">401</b><span>Leftover</span></div>
+      <div class="ft-card"><b id="ftDone">145</b><span>Done</span></div>
+      <div class="ft-card"><b>4</b><span>Nov Papers</span></div>
+      <div class="ft-card"><b>3</b><span>Dec Papers</span></div>
+      <div class="ft-card"><b>4:30</b><span>Wake AM</span></div>
+      <div class="ft-card"><b id="ftHrs">~1286</b><span>Hours Left</span></div>
+    </div>
+    
+    <div class="ft-path">
+      <div class="path-step"><span>START</span> 25 Aug 2026</div>
+      <div class="path-line"></div>
+      <div class="path-step"><span>NOV</span> GST, IT, Acc, Law</div>
+      <div class="path-line"></div>
+      <div class="path-step"><span>DEC</span> Cost, Audit, FM&SM, Rev</div>
+    </div>
+    
+    <div class="ft-quote">"Quality study + consistency = CA success"</div>
+  </div>
+</footer>
+
+
+<!-- Focus Mode Modal -->
+<div id="pomoModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; z-index:99999; background:rgba(15,23,42,0.97); flex-direction:column; justify-content:center; align-items:center;">
+  <h2 style="font-size:3rem; color:#fff; margin-bottom:10px;">Distraction-Free Focus</h2>
+  <p style="color:#94a3b8; font-size:1.2rem; margin-bottom:40px;">No phone scroll. Quality study + consistency = CA success.</p>
+  <div id="pomoTimer" style="font-size:10rem; font-weight:900; background: linear-gradient(135deg, #38bdf8, #818cf8); -webkit-background-clip:text; -webkit-text-fill-color:transparent; margin-bottom:60px; line-height:1;">50:00</div>
+  <div style="display:flex; gap:20px; flex-wrap:wrap; justify-content:center;">
+    <button onclick="pomoControl('start')" style="padding:16px 32px; font-size:18px; border-radius:12px; border:none; background:#22c55e; color:#fff; font-weight:800; cursor:pointer; transition:transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">▶️ Start 50m Study</button>
+    <button onclick="pomoControl('break')" style="padding:16px 32px; font-size:18px; border-radius:12px; border:none; background:#f5b942; color:#fff; font-weight:800; cursor:pointer; transition:transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">☕ Take 10m Break</button>
+    <button onclick="pomoControl('close')" style="padding:16px 32px; font-size:18px; border-radius:12px; border:1px solid rgba(255,255,255,0.2); background:transparent; color:#fff; font-weight:800; cursor:pointer; transition:background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.1)'" onmouseout="this.style.background='transparent'">❌ Close Timer</button>
+  </div>
+</div>
+
+<script>
+const SUBS = {
+  ACC:{name:"Accounting",cls:"",speed:"1.25× · watch 2h · HW 1.5h",target:"November",
+    total:126,doneL:37,
+    modules:[
+      {name:"Already finished (skip)",chs:[
+        {n:"CH-01 Introduction",t:1,l:0,done:1},
+        {n:"CH-02 AS 13",t:9,l:0,done:1},
+        {n:"CH-03 Financial Statements",t:9,l:0,done:1},
+        {n:"CH-04 Cash Flow AS 3",t:8,l:0,done:1},
+        {n:"CH-05 Buyback",t:4,l:0,done:1}
+      ]},
+      {name:"Module A · Company accounts leftover",chs:[
+        {n:"CH-06 Internal Reconstruction",t:7,l:2,from:6},
+        {n:"CH-07 Amalgamation + AS 14",t:12,l:12,from:1},
+        {n:"CH-08 Branch Accounting",t:11,l:11,from:1}
+      ]},
+      {name:"Module B · Consolidation leftover",chs:[
+        {n:"CH-09 AS 21 Consolidated FS",t:9,l:9,from:1},
+        {n:"CH-10 Framework for Preparation",t:2,l:2,from:1}
+      ]},
+      {name:"Module C · Accounting Standards (51 leftover)",chs:[
+        {n:"CH-11 Accounting Standards pack",t:51,l:51,from:1}
+      ]},
+      {name:"Module D · wrap leftover",chs:[
+        {n:"CH-12 Doubt Session",t:2,l:1,from:2},
+        {n:"CH-13 Strategic Session",t:1,l:1,from:1}
+      ]}
+    ]},
+  LAW:{name:"Corporate Law",cls:"law",speed:"1.5× · watch 1h40 · HW 1h",target:"November",
+    total:98,doneL:41,
+    modules:[
+      {name:"Already finished (skip)",chs:[
+        {n:"CH-01 Intro",t:1,l:0,done:1},{n:"CH-02 Preliminary",t:8,l:0,done:1},
+        {n:"CH-04 Prospectus",t:9,l:0,done:1},{n:"CH-05 Share Capital",t:11,l:0,done:1}
+      ]},
+      {name:"Module A · leftover company law",chs:[
+        {n:"CH-03 Incorporation",t:11,l:1,from:11},
+        {n:"CH-06 Acceptance of Deposits",t:5,l:3,from:3},
+        {n:"CH-07 Companies Incorporated Outside India",t:3,l:3,from:1},
+        {n:"CH-08 LLP Act",t:4,l:4,from:1},
+        {n:"CH-09 Management & Administration",t:9,l:9,from:1},
+        {n:"CH-10 Accounts of Companies",t:6,l:6,from:1},
+        {n:"CH-11 Registration of Charges",t:3,l:3,from:1},
+        {n:"CH-12 Dividend",t:3,l:3,from:1},
+        {n:"CH-13 Audit and Auditors",t:7,l:7,from:1}
+      ]},
+      {name:"Module B · Other laws leftover",chs:[
+        {n:"CH-14 FEMA",t:6,l:6,from:1},
+        {n:"CH-15 Interpretation of Statutes",t:5,l:5,from:1},
+        {n:"CH-16 General Clauses Act",t:4,l:4,from:1},
+        {n:"CH-17 Writing Practice",t:2,l:2,from:1},
+        {n:"CH-18 Doubt Session",t:1,l:1,from:1}
+      ]}
+    ]},
+  GST:{name:"GST",cls:"gst",speed:"1.5× · watch 1h40 · HW 1h",target:"October",
+    total:66,doneL:35,
+    modules:[
+      {name:"Already finished (skip)",chs:[
+        {n:"CH-03 Value of Supply",t:3,l:0,done:1},
+        {n:"CH-05 Place of Supply",t:5,l:0,done:1},
+        {n:"CH-07 Input Tax Credit",t:7,l:0,done:1}
+      ]},
+      {name:"Module A · leftover core",chs:[
+        {n:"CH-01 GST Intro",t:3,l:3,from:1},
+        {n:"CH-02 Supply",t:11,l:2,from:10},
+        {n:"CH-04 Time of Supply",t:4,l:1,from:4},
+        {n:"CH-06 Charge of GST",t:8,l:1,from:8}
+      ]},
+      {name:"Module B · leftover procedures",chs:[
+        {n:"CH-08 Registration",t:6,l:5,from:2},
+        {n:"CH-09 Exemption",t:5,l:5,from:1},
+        {n:"CH-10 Payment of Tax",t:4,l:4,from:1},
+        {n:"CH-11 E-way Bill",t:2,l:2,from:1},
+        {n:"CH-12 Tax Invoice / CDN",t:2,l:2,from:1},
+        {n:"CH-13 TDS under GST",t:2,l:2,from:1},
+        {n:"CH-14 Returns",t:4,l:4,from:1}
+      ]}
+    ]},
+  IT:{name:"Income Tax",cls:"it",speed:"1× · watch 2h30 · HW 1h",target:"November",
+    total:65,doneL:0,
+    modules:[
+      {name:"Module A · basics (0 done)",chs:[
+        {n:"CH-01 Basic Concepts",t:7,l:7,from:1}
+      ]},
+      {name:"Module B · heads of income (0 done)",chs:[
+        {n:"CH-02 House Property",t:5,l:5,from:1},
+        {n:"CH-03 Salary",t:12,l:12,from:1},
+        {n:"CH-04 PGBP",t:13,l:13,from:1},
+        {n:"CH-05 Capital Gains",t:12,l:12,from:1},
+        {n:"CH-06 Other Sources",t:3,l:3,from:1}
+      ]},
+      {name:"Module C · computation leftover (all)",chs:[
+        {n:"CH-07 Deductions",t:2,l:2,from:1},
+        {n:"CH-08 Advance Tax, TDS & TCS",t:4,l:4,from:1},
+        {n:"CH-09 Clubbing",t:1,l:1,from:1},
+        {n:"CH-10 Set-off & Carry forward",t:2,l:2,from:1},
+        {n:"CH-11 Residence & Scope",t:4,l:4,from:1}
+      ]}
+    ]},
+  COST:{name:"Cost Management",cls:"cost",speed:"1× · watch 2h30 · HW 1h",target:"December",
+    total:103,doneL:32,
+    modules:[
+      {name:"Already finished (skip)",chs:[
+        {n:"CH-02 Material Cost",t:15,l:0,done:1},
+        {n:"CH-03 Employee Cost",t:9,l:0,done:1}
+      ]},
+      {name:"Module A · leftover costing",chs:[
+        {n:"CH-01 Intro to Cost",t:4,l:2,from:3},
+        {n:"CH-04 Overheads",t:12,l:6,from:7},
+        {n:"CH-05 Activity Based Costing",t:5,l:5,from:1},
+        {n:"CH-06 Cost Sheet",t:8,l:8,from:1},
+        {n:"CH-07 Job Costing",t:1,l:1,from:1},
+        {n:"CH-08 Batch Costing",t:1,l:1,from:1},
+        {n:"CH-09 Cost Accounting System",t:8,l:8,from:1}
+      ]},
+      {name:"Module B · leftover methods",chs:[
+        {n:"CH-10 Service Costing",t:7,l:7,from:1},
+        {n:"CH-11 Process Costing",t:7,l:7,from:1},
+        {n:"CH-12 Joint & By-product",t:4,l:4,from:1},
+        {n:"CH-13 Marginal Costing",t:10,l:10,from:1},
+        {n:"CH-14 Budgetary Control",t:4,l:4,from:1},
+        {n:"CH-15 Standard Costing",t:7,l:7,from:1},
+        {n:"CH-16 Theory Session",t:1,l:1,from:1}
+      ]}
+    ]},
+  AUD:{name:"Auditing",cls:"aud",speed:"1.25× · watch 2h · HW 1h",target:"December",
+    total:31,doneL:0,
+    modules:[{name:"All leftover (0 done)",chs:[
+      {n:"CH-01 Nature, Objective & Scope",t:7,l:7,from:1},
+      {n:"CH-02 Ethics & Engagement",t:7,l:7,from:1},
+      {n:"CH-03 Strategy, Planning, Programme",t:4,l:4,from:1},
+      {n:"CH-04 Audit Documentation",t:2,l:2,from:1},
+      {n:"CH-05 Completion and Review",t:7,l:7,from:1},
+      {n:"CH-06 Audit Report",t:4,l:4,from:1}
+    ]}]},
+  MSM:{name:"FM & SM",cls:"msm",speed:"1.25× · watch 2h · HW 1h",target:"December",
+    total:57,doneL:0,
+    modules:[
+      {name:"Module A · FM leftover (screenshot)",chs:[
+        {n:"CH-01 Scope & Objectives of FM",t:2,l:2,from:1},
+        {n:"CH-02 Basic Concepts",t:3,l:3,from:1},
+        {n:"CH-03 Leverage",t:6,l:6,from:1},
+        {n:"CH-04 Cost of Capital",t:11,l:11,from:1},
+        {n:"CH-05 Financing Decision — Capital Structure",t:10,l:10,from:1},
+        {n:"CH-06 Investment Decisions",t:1,l:1,from:1}
+      ]},
+      {name:"Module B · SM leftover (screenshot)",chs:[
+        {n:"CH-07 Introduction to Strategic Mgmt",t:3,l:3,from:1},
+        {n:"CH-08 Strategic Analysis: External",t:7,l:7,from:1},
+        {n:"CH-09 Strategic Analysis: Internal",t:5,l:5,from:1},
+        {n:"CH-10 Strategic Choices (Sep 2026)",t:4,l:4,from:1},
+        {n:"CH-11 Strategy Implementation & Evaluation",t:5,l:5,from:1}
+      ]}
+    ]}
+};
+
+function windowTicks(id){ try{ return !!(ticks && ticks[id]); }catch(e){ return false; } }
+function leftOf(s){return s.modules.reduce((a,m)=>a+m.chs.reduce((b,c)=>b+(c.l||0),0),0)}
+function qOf(code){
+  const s=SUBS[code], q=[];
+  s.modules.forEach((m,mi)=>m.chs.forEach((c,ci)=>{
+    if(c.done) return;
+    const id=cid(code,mi,ci);
+    if(windowTicks(id)) return;
+    for(let i=0;i<(c.l||0);i++){
+      const lec=(c.from||1)+i;
+      if(windowTicks(id+"-L"+lec)) continue;
+      q.push({code, short:c.n.replace(/^CH-0?/, "CH"), lec, of:c.t, full:c.n});
+    }
+  }));
+  return q;
+}
+
+/* Weekly leftover pattern until a queue empties, then that slot takes next leftover paper */
+function buildDays(){
+  const Q={ACC:qOf("ACC"),IT:qOf("IT"),GST:qOf("GST"),LAW:qOf("LAW"),COST:qOf("COST"),AUD:qOf("AUD"),MSM:qOf("MSM")};
+  const pattern={
+    1:["ACC","IT","GST","LAW","AUD"],
+    2:["ACC","IT","LAW","COST","MSM"],
+    3:["ACC","IT","GST","LAW","AUD"],
+    4:["ACC","IT","LAW","COST","MSM"],
+    5:["ACC","IT","GST","LAW","AUD"],
+    6:["ACC","IT","LAW","COST","MSM"]
+  };
+  const fallback=["ACC","IT","LAW","COST","MSM","AUD","GST"];
+  const days=[];
+  const last={};
+  function take(code){
+    if(Q[code]&&Q[code].length) return Q[code].shift();
+    for(const f of fallback){ if(Q[f].length) return Q[f].shift(); }
+    return null;
+  }
+  let d=new Date(2026,7,25);
+  let guard=0;
+  while(fallback.some(c=>Q[c].length) && guard++<250){
+    const dow=d.getDay();
+    if(dow===0){ days.push({date:new Date(d),sun:true,slots:[]}); d.setDate(d.getDate()+1); continue; }
+    const slots=pattern[dow].map(c=>take(c)).filter(Boolean);
+    slots.forEach(s=>{ last[s.code]=new Date(d); });
+    days.push({date:new Date(d),sun:false,slots});
+    d.setDate(d.getDate()+1);
+  }
+  return {days,last};
+}
+
+let PLAN={days:[],last:{}};
+const fmt=d=>d.toLocaleDateString("en-IN",{weekday:"short",day:"2-digit",month:"short"});
+const mon=d=>d.toLocaleDateString("en-IN",{month:"long",year:"numeric"});
+
+function renderStats(){
+  const items=Object.keys(SUBS).map(k=>{
+    const s=SUBS[k], x=liveOf(k);
+    return `<div class="stat"><em>${s.name}</em><b>${x.left}</b><em>${x.done} done · ${s.total} total</em></div>`;
+  });
+  const last=PLAN.days.filter(x=>!x.sun).slice(-1)[0];
+  items.push(`<div class="stat"><em>Last leftover lecture</em><b style="font-size:16px">${last?fmt(last.date):"—"}</b><em>if 5/day, Sundays free</em></div>`);
+  document.getElementById("stats").innerHTML=items.join("");
+}
+
+function storeGet(k, fallback){
+  try{ const v=localStorage.getItem(k); if(v) return JSON.parse(v); }catch(e){}
+  try{ const v=sessionStorage.getItem(k); if(v) return JSON.parse(v); }catch(e){}
+  return fallback;
+}
+function storeSet(k, val){
+  const s=JSON.stringify(val);
+  try{ localStorage.setItem(k,s); return; }catch(e){}
+  try{ sessionStorage.setItem(k,s); }catch(e){}
+}
+const LS="ca26_left_v3";
+let ticks=storeGet(LS,{});
+const REDOK="ca26_redo_v1";
+let REDO=storeGet(REDOK,{});
+PLAN=buildDays();
+function cid(code,mi,ci){return code+"-"+mi+"-"+ci}
+function liveOf(code){
+  const s=SUBS[code];
+  if(!s) return {left:0,done:0,pct:0};
+  let left=0, extra=0;
+  s.modules.forEach((m,mi)=>m.chs.forEach((c,ci)=>{
+    if(c.done) return;
+    const id=cid(code,mi,ci);
+    const totL=c.l||0;
+    if(ticks[id]){ extra += totL; return; }
+    let dL=0;
+    for(let i=0;i<totL;i++){
+      const lec=(c.from||1)+i;
+      if(ticks[id+"-L"+lec]) dL++;
+    }
+    extra += dL; left += (totL-dL);
+  }));
+  const done=(s.doneL||0)+extra;
+  const tot=s.total|| (done+left);
+  return {left, done, pct: tot? Math.round(100*done/tot):0};
+}
+function paintCardLive(card){
+  if(!card) return;
+  const x=liveOf(card.getAttribute("data-code"));
+  const m=card.querySelector(".live-meta");
+  if(m) m.innerHTML="Done "+x.done+" · <b>Left "+x.left+"</b>";
+  const b=card.querySelector(".live-bar");
+  if(b) b.style.width=x.pct+"%";
+}
+
+
+const HRS={ACC:3.5,LAW:2.67,GST:2.67,IT:3.5,COST:3.5,AUD:3,MSM:3};
+function grandLive(){
+  let left=0,done=0,tot=0,hrs=0;
+  const per={};
+  Object.keys(SUBS).forEach(k=>{
+    const s=SUBS[k], x=liveOf(k);
+    per[k]=x; left+=x.left; done+=x.done; tot+=s.total||0; hrs+=x.left*(HRS[k]||3);
+  });
+  return {left,done,tot,hrs:Math.round(hrs),per};
+}
+
+const EXAM=new Date(2027,0,6); EXAM.setHours(0,0,0,0);
+const DECEND=new Date(2026,11,31); DECEND.setHours(0,0,0,0);
+let _paperToast={};
+function daysBetween(a,b){ return Math.round((b-a)/86400000); }
+function paintJourney(){
+  const g=grandLive();
+  const now=today0();
+  const examD=Math.max(0,daysBetween(now,EXAM));
+  const decD=Math.max(0,daysBetween(now,DECEND));
+  const teachLeft=Math.max(1, Math.floor(decD*6/7));
+  const need=+(g.left/teachLeft).toFixed(1);
+  const pct=g.tot?Math.round(100*g.done/g.tot):0;
+  const circ=2*Math.PI*52;
+  const arc=document.getElementById("jArc");
+  if(arc) arc.setAttribute("stroke-dashoffset", String(circ*(1-pct/100)));
+  const set=(id,v)=>{const e=document.getElementById(id); if(e) e.innerHTML=v;};
+  set("jPct", pct+"%<small>done</small>");
+  set("jExam", examD+" days");
+  set("jDec", decD+" days");
+  set("jPace", "leftover finish 31 Dec · ~"+teachLeft+" teaching days");
+  const track=document.getElementById("jTrackCard");
+  let tlab, tsub, cls="jcard";
+  if(now<new Date(2026,7,25)){ tlab="Prep"; tsub="25 Aug se official 5 leftover/day"; }
+  else if(need<=5){ tlab="On track"; tsub="Need ~"+need+"/day · aap 5/day plan pe ho"; cls+=" ok"; }
+  else { tlab="Push"; tsub="Need ~"+need+"/day to finish leftover by Dec · quality mat girao, overflow Sunday"; cls+=" hot"; }
+  set("jTrack", tlab); set("jNeed", tsub);
+  if(track) track.className=cls;
+  let papers=0, names=[];
+  Object.keys(SUBS).forEach(k=>{ if(liveOf(k).left===0){ papers++; names.push(SUBS[k].name); if(!_paperToast[k]){ _paperToast[k]=1;  } } else _paperToast[k]=0; });
+  let streak=0;
+  try{
+    if(typeof DLOG==="object" && DLOG){
+      for(let i=0;i<400;i++){
+        const dd=new Date(now); dd.setDate(now.getDate()-i);
+        if(dd<new Date(2026,7,25)) break;
+        const c=countDoneDay(iso(dd),dd);
+        if(c.total && c.done===c.total) streak++; else if(i===0) continue; else break;
+      }
+    }
+  }catch(e){}
+  set("jStreak", streak+" day");
+  set("jPapers", papers+" / 7 papers leftover-empty"+(names.length?(" · "+names.join(", ")):""));
+  const motto=document.getElementById("jMotto");
+  if(motto){
+    if(g.left===0) motto.textContent="Leftover queue empty. Ab revision + mocks — Jan 2027 ke liye quality.";
+    else if(need>5) motto.textContent="Leftover "+g.left+" · Dec tak ~"+need+" / teaching day chahiye. Aaj ke 5 pehle poore karo, Sunday overflow max 2.";
+    else motto.textContent="Leftover "+g.left+" · 5/day kaafi hai Dec finish ke liye. Aaj ka Class 1 Accounts se start. Hobby mat chhodo.";
+  }
+  paintAS();
+  paintExamLock();
+  paintSunRep();
+}
+function paintAS(){
+  const id="ACC-3-0";
+  const done=!!(ticks&&ticks[id]);
+  const left=done?0:51;
+  const pct=Math.round(100*(51-left)/51);
+  const circ=2*Math.PI*22;
+  const a=document.getElementById("asArc");
+  if(a) a.setAttribute("stroke-dashoffset", String(circ*(1-pct/100)));
+  const ln=document.getElementById("asLine");
+  if(ln) ln.textContent=done?"AS pack complete":(left+" leftover · "+pct+"% of pack");
+  const h=document.getElementById("asHint");
+  if(h) h.textContent=done?"AS 51 lectures done. Revision + RTP ab.":"CH-11 = 51 lectures. IT khatam hone ke baad dono slots yahin.";
+}
+function paintExamLock(){
+  const el=document.getElementById("examLock");
+  if(!el) return;
+  const n=today0();
+  const on=n.getFullYear()===2027 && n.getMonth()===0;
+  el.classList.toggle("on", on);
+  document.body.classList.toggle("exam-month", on);
+}
+function paintSunRep(){
+  const box=document.getElementById("sunrep");
+  if(!box || typeof DLOG!=="object" || !DLOG) { if(box) box.innerHTML=""; return; }
+  let mon; try{ mon=mondayOf(weekAnchor||today0()); }catch(e){ mon=mondayOf(today0()); }
+  let planned=0, logged=0, full=0, sun="—";
+  for(let i=0;i<7;i++){
+    const d=new Date(mon); d.setDate(mon.getDate()+i);
+    const c=countDoneDay(iso(d),d);
+    const p=findPlan(d);
+    planned += c.plannedLec;
+    logged += c.lec;
+    if(c.total && c.done===c.total) full++;
+    if(d.getDay()===0) sun=c.done+"/"+c.total+" Sunday tasks";
+  }
+  const pct=planned?Math.round(100*logged/planned):0;
+  box.innerHTML='<div class="jcard"><em>Hafte ka plan</em><b>'+planned+'</b><span>leftover lectures (max 5×6)</span></div>'
+    +'<div class="jcard '+(pct>=80?"ok":"hot")+'"><em>Logged</em><b>'+logged+'</b><span>'+pct+'% of planned leftover</span></div>'
+    +'<div class="jcard"><em>Full days</em><b>'+full+'/7</b><span>saare daily tasks tick</span></div>'
+    +'<div class="jcard"><em>Sunday card</em><b style="font-size:15px">'+sun+'</b><span>overflow max 2 leftover</span></div>';
+}
+function buildPrintSheet(){
+  const g=grandLive();
+  const d=today0();
+  const p=findPlan(d);
+  const mon=mondayOf(d);
+  let week="";
+  for(let i=0;i<7;i++){
+    const x=new Date(mon); x.setDate(mon.getDate()+i);
+    const pl=findPlan(x);
+    const slots=pl&&!pl.sun?(pl.slots||[]).map(s=>s.code+" "+s.short+" L"+s.lec).join(" · "):(pl&&pl.sun?"Sunday revision":"—");
+    week+="<tr><td>"+fmt(x)+"</td><td>"+slots+"</td></tr>";
+  }
+  const today=p&&!p.sun?(p.slots||[]).map(s=>s.full+" L"+s.lec+"/"+s.of).join("<br>"):(p&&p.sun?"Sunday revision":"prep / buffer");
+  return "<h2>CA Inter leftover · "+fmt(d)+"</h2><p>Left "+g.left+" / "+g.tot+" · Done "+g.done+" · Jan 2027</p>"
+    +"<h3>Aaj</h3><p>"+today+"</p><h3>Yeh hafta</h3><table><thead><tr><th>Din</th><th>Slots</th></tr></thead><tbody>"+week+"</tbody></table>";
+}
+function doPrint(){
+  const s=document.getElementById("printSheet");
+  if(s) s.innerHTML=buildPrintSheet();
+  try{ if(typeof window.print==="function") window.print(); }catch(e){}
+}
+function pingToast(msg){
+  const el=document.getElementById("toast");
+  if(!el) return;
+  el.textContent=msg; el.classList.add("on");
+  setTimeout(()=>el.classList.remove("on"), 3200);
+}
+
+
+function svgDonut(pct,color,label,sub){
+  pct=Math.max(0,Math.min(100,+pct||0));
+  const r=52,c=2*Math.PI*r,off=c*(1-pct/100);
+  return `<div class="dcard"><h3>${label}</h3>
+    <svg viewBox="0 0 140 140" width="200" height="200">
+      <circle cx="70" cy="70" r="${r}" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="14"/>
+      <circle cx="70" cy="70" r="${r}" fill="none" stroke="${color}" stroke-width="14" stroke-linecap="round"
+        stroke-dasharray="${c.toFixed(1)}" stroke-dashoffset="${off.toFixed(1)}" transform="rotate(-90 70 70)"/>
+      <text x="70" y="76" text-anchor="middle" fill="#fff" font-size="22" font-weight="800">${Math.round(pct)}%</text>
+    </svg>
+    <div class="sub" style="text-align:center">${sub||""}</div></div>`;
+}
+function svgMixDonut(items,title){
+  const cols=["#f6b26b","#e8edf5","#b4c4f8","#8ec9a8","#c5cdd8","#9db7f5","#f0c48a"];
+  const tot=items.reduce((a,i)=>a+Math.max(0,+i.v||0),0)||1;
+  const cx=200,cy=188,R=132,r=74,gap=0.12;
+  let a=-Math.PI/2, segs="";
+  items.forEach((it,i)=>{
+    const frac=Math.max(0.05, (+it.v||0)/tot);
+    const sweep=frac*(Math.PI*2)-gap;
+    const a1=a+Math.max(0.1,sweep);
+    const p0x=cx+R*Math.cos(a), p0y=cy+R*Math.sin(a);
+    const p1x=cx+R*Math.cos(a1), p1y=cy+R*Math.sin(a1);
+    const q0x=cx+r*Math.cos(a1), q0y=cy+r*Math.sin(a1);
+    const q1x=cx+r*Math.cos(a), q1y=cy+r*Math.sin(a);
+    const large=(a1-a)>Math.PI?1:0;
+    segs+=`<path d="M${p0x.toFixed(1)} ${p0y.toFixed(1)} A${R} ${R} 0 ${large} 1 ${p1x.toFixed(1)} ${p1y.toFixed(1)} L${q0x.toFixed(1)} ${q0y.toFixed(1)} A${r} ${r} 0 ${large} 0 ${q1x.toFixed(1)} ${q1y.toFixed(1)} Z" fill="${it.c||cols[i%cols.length]}"/>`;
+    a=a1+gap;
+  });
+  const bag=`<circle cx="${cx}" cy="${cy}" r="36" fill="rgba(15,23,42,0.8)" stroke="rgba(255,255,255,0.1)" stroke-width="1.6" stroke-dasharray="4 4"/>
+    <rect x="${cx-14}" y="${cy-7}" width="28" height="20" rx="5" fill="none" stroke="#9aa8c7" stroke-width="2"/>
+    <path d="M${cx-7} ${cy-7} v-4 a7 7 0 0 1 14 0 v4" fill="none" stroke="#9aa8c7" stroke-width="2"/>
+    <circle cx="${cx}" cy="${cy+3}" r="2.6" fill="none" stroke="#9aa8c7" stroke-width="1.6"/>`;
+  const labs=items.map((it,i)=>`<span style="display:inline-flex;align-items:center;gap:6px;margin:4px 8px 0 0;font-size:13px;color:#cbd5e1"><i style="width:10px;height:10px;border-radius:50%;background:${it.c||cols[i%cols.length]}"></i>${it.l} ${it.v}</span>`).join("");
+  return `<div class="dcard dwide"><h3>${title||"Revenue source distribution"}</h3>
+    <svg viewBox="0 0 400 380" width="100%" height="300" preserveAspectRatio="xMidYMid meet">${segs}${bag}</svg>
+    <div class="sub" style="text-align:center;font-size:13px">${labs}</div></div>`;
+}
+function svgBars(items,title){ return svgMixDonut(items,title); }
+function svgLine(vals,title,sub){
+  const w=280,h=120,n=vals.length||1;
+  const max=Math.max(1,...vals);
+  const pts=vals.map((v,i)=>{
+    const x=20+(i*(w-40)/Math.max(1,n-1));
+    const y=100-(v/max)*80;
+    return x+","+y;
+  }).join(" ");
+  const dots=vals.map((v,i)=>{
+    const x=20+(i*(w-40)/Math.max(1,n-1));
+    const y=100-(v/max)*80;
+    return `<circle cx="${x}" cy="${y}" r="3.5" fill="#fb7185"/>`;
+  }).join("");
+  return `<div class="dcard"><h3>${title}</h3>
+    <svg viewBox="0 0 ${w} ${h}" width="100%" height="140">
+      <polyline fill="none" stroke="#38bdf8" stroke-width="2.5" points="${pts}"/>
+      ${dots}
+    </svg><div class="sub">${sub||""}</div></div>`;
+}
+function svgGauge(pct,title,sub){
+  pct=Math.max(0,Math.min(100,pct||0));
+  const a=Math.PI*(1-pct/100);
+  const x=60+46*Math.cos(a), y=78-46*Math.sin(a);
+  return `<div class="dcard"><h3>${title}</h3>
+    <svg viewBox="0 0 120 90" width="160" height="120">
+      <path d="M14 78 A46 46 0 0 1 106 78" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="12" stroke-linecap="round"/>
+      <path d="M14 78 A46 46 0 0 1 106 78" fill="none" stroke="#a78bfa" stroke-width="12" stroke-linecap="round"
+        stroke-dasharray="${(Math.PI*46).toFixed(1)}" stroke-dashoffset="${(Math.PI*46*(1-pct/100)).toFixed(1)}"/>
+      <circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="5" fill="#f472b6"/>
+      <text x="60" y="72" text-anchor="middle" fill="#fff" font-size="16" font-weight="800">${Math.round(pct)}%</text>
+    </svg><div class="sub" style="text-align:center">${sub||""}</div></div>`;
+}
+const GRAPHK="ca26_graph_v1";
+const GRAPHHIDE="ca26_graph_hide_v1";
+var GREC=storeGet(GRAPHK,{});
+var _liveMax=80;
+var _liveS={};
+function _lsPush(k,v){
+  if(!_liveS[k]) _liveS[k]=[];
+  _liveS[k].push(+v||0);
+  if(_liveS[k].length>_liveMax) _liveS[k].shift();
+}
+function archiveGraphHidden(){
+  try{
+    const pack={saved:Date.now(), days:GREC, live:_liveS};
+    storeSet(GRAPHHIDE, pack);
+  }catch(e){}
+}
+function _lsPoly(arr,w,h,pad,ymin,ymax){
+  const n=arr.length;
+  if(!n) return "";
+  const span=Math.max(1e-6, ymax-ymin);
+  return arr.map((v,i)=>{
+    const x=pad.l+(i*(w-pad.l-pad.r)/Math.max(1,n-1));
+    const y=pad.t+(h-pad.t-pad.b)*(1-(v-ymin)/span);
+    return x.toFixed(1)+","+y.toFixed(1);
+  }).join(" ");
+}
+
+function paintLiveMe(){
+  const host=document.getElementById("liveMe");
+  if(!host) return;
+  const g=grandLive();
+  const pct=g.tot?Math.round(1000*g.done/g.tot)/10:0;
+  const leftp=g.tot?Math.round(1000*g.left/g.tot)/10:0;
+  const now=today0();
+  const start=new Date(START); start.setHours(0,0,0,0);
+  const examD=Math.max(0,daysBetween(now,EXAM));
+  const decD=Math.max(0,daysBetween(now,DECEND));
+  const teachLeft=Math.max(1, Math.floor(decD*6/7));
+  const need=+(g.left/teachLeft).toFixed(2);
+  const asDone=!!(ticks&&ticks["ACC-3-0"]);
+  let papers=0;
+  Object.keys(SUBS).forEach(k=>{ if(liveOf(k).left===0) papers++; });
+  let todayC={done:0,total:0,pct:0,lec:0,plannedLec:0};
+  try{ todayC=countDoneDay(iso(now),now); }catch(e){}
+  
+  let plannedLecs=0, loggedLec=0;
+  try{
+    plannedLecs=PLAN.days.filter(x=>!x.sun && x.date<now).reduce((a,d)=>a+d.slots.length,0);
+    for(let i=0;i<400;i++){
+      const dd=new Date(start); dd.setDate(start.getDate()+i);
+      if(dd>now) break;
+      loggedLec+=countDoneDay(iso(dd),dd).lec;
+    }
+  }catch(e){}
+  
+  let streak=0;
+  try{
+    for(let i=0;i<60;i++){
+      const dd=new Date(now); dd.setDate(now.getDate()-i);
+      if(dd<start) break;
+      const c=countDoneDay(iso(dd),dd);
+      if(c.total&&c.done===c.total) streak++;
+      else if(i===0) continue; else break;
+    }
+  }catch(e){}
+
+  const cells=[
+    ["Leftover", g.left, g.tot+" total"],
+    ["Done", g.done, pct+"%"],
+    ["Hours left", "~"+g.hrs, "watch+HW"],
+    ["Exam days", examD, "Jan 2027"],
+    ["Need / day", need, "vs 5"],
+    ["Aaj tasks", todayC.done+"/"+todayC.total, todayC.pct+"%"],
+    ["Logged lec", loggedLec, "plan "+plannedLecs],
+    ["Streak", streak+" d", "full"],
+    ["Papers 0", papers+"/7", "empty"],
+    ["AS-51", asDone?"100%":"0%", "pack"]
+  ];
+  const papersHtml=Object.keys(SUBS).map(k=>{
+    const x=liveOf(k);
+    return `<span class="tg ${k}">${k} ${x.left}L · ${x.done}D</span>`;
+  }).join("");
+  
+  host.innerHTML=`<h3><span class="pulse"></span>Live leftover mix</h3>
+    <div class="lgrid">${cells.map(c=>`<div class="lcell"><em>${c[0]}</em><b>${c[1]}</b><em>${c[2]}</em></div>`).join("")}</div>
+    <div class="lpapers">${papersHtml}</div>`;
+}
+
+function paintDeep(){
+  const host=document.getElementById("deepGrid");
+  if(!host) return;
+  if(typeof ApexCharts==="undefined"){
+    host.innerHTML='<p class="hint">Graphs ke liye ek baar internet chahiye (ApexCharts CDN). Baaki sab offline kaam karta hai.</p>';
+    return;
+  }
+
+  // 1. Dono charts ka data pehle compute karo (DOM ko bina chhue)
+  let weekVals=[], weekLab=[];
+  let mon; try{ mon=mondayOf(weekAnchor||today0()); }catch(e){ mon=mondayOf(today0()); }
+  for(let i=0;i<7;i++){
+    const d=new Date(mon); d.setDate(mon.getDate()+i);
+    let pv=0;
+    try{ pv=countDoneDay(iso(d),d).pct; }catch(e){}
+    weekVals.push(pv);
+    weekLab.push(d.toLocaleDateString("en-IN",{weekday:"short"}));
+  }
+  const subKeys = Object.keys(SUBS);
+  const leftData = subKeys.map(k => liveOf(k).left);
+  const doneData = subKeys.map(k => liveOf(k).done);
+
+  // 2. Data same hai + dono charts zinda → kuch mat chhedo (autoRefresh har 3s call karta hai)
+  const _sig=JSON.stringify([weekVals,leftData,doneData]);
+  if(_sig===window._deepSig && window._apx1 && window._apx2) return;
+  window._deepSig=_sig;
+
+  // 3. Data badla → purane instances destroy, DOM rebuild, dono naya render
+  if(window._apx1){ try{ window._apx1.destroy(); }catch(e){} window._apx1=null; }
+  if(window._apx2){ try{ window._apx2.destroy(); }catch(e){} window._apx2=null; }
+
+  host.innerHTML = `
+    <div class="dcard dwide" style="padding: 24px;">
+      <h3 style="text-align: left; margin-bottom: 0;">Last 7 Days Progress</h3>
+      <div id="apex-line-chart" style="width: 100%; height: 320px;"></div>
+    </div>
+    <div class="dcard dwide" style="padding: 24px;">
+      <h3 style="text-align: left; margin-bottom: 0;">Subject Wise Status (Leftover vs Done)</h3>
+      <div id="apex-bar-chart" style="width: 100%; height: 350px;"></div>
+    </div>
+  `;
+
+  // Common Theme Options
+  const chartOptions = {
+    chart: { foreColor: '#94a3b8', toolbar: { show: false }, background: 'transparent', zoom: { enabled: false } },
+    theme: { mode: 'dark' },
+    tooltip: { theme: 'dark', style: { fontSize: '13px' }, marker: { show: true } },
+    grid: { borderColor: 'rgba(255,255,255,0.05)', strokeDashArray: 4 }
+  };
+
+  // Line Chart Render
+  try{
+    window._apx1 = new ApexCharts(document.querySelector("#apex-line-chart"), {
+      ...chartOptions,
+      series: [{ name: 'Tasks Completed %', data: weekVals }],
+      chart: { type: 'area', height: 320, ...chartOptions.chart },
+      colors: ['#38bdf8'],
+      fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.4, opacityTo: 0.05, stops: [0, 100] } },
+      dataLabels: { enabled: false },
+      stroke: { curve: 'smooth', width: 3 },
+      xaxis: { categories: weekLab, axisBorder: { show: false }, axisTicks: { show: false } },
+      yaxis: { min: 0, max: 100, tickAmount: 5, labels: { formatter: (val) => val + "%" } }
+    });
+    window._apx1.render().catch(function(){ window._apx1=null; });
+  }catch(e){ window._apx1=null; }
+
+  // Stacked Bar Chart Render
+  try{
+    window._apx2 = new ApexCharts(document.querySelector("#apex-bar-chart"), {
+      ...chartOptions,
+      series: [
+        { name: 'Leftover Lectures', data: leftData },
+        { name: 'Completed Lectures', data: doneData }
+      ],
+      chart: { type: 'bar', height: 350, stacked: true, ...chartOptions.chart },
+      colors: ['#fb7185', '#34d399'],
+      plotOptions: { bar: { horizontal: false, columnWidth: '40%', borderRadius: 4, dataLabels: { total: { enabled: true, style: { color: '#fff', fontSize: '13px' } } } } },
+      dataLabels: { enabled: false },
+      stroke: { width: 1, colors: ['transparent'] },
+      xaxis: { categories: subKeys, axisBorder: { show: false }, axisTicks: { show: false } },
+      yaxis: { title: { text: 'Lectures' } },
+      fill: { opacity: 1 },
+      legend: { position: 'top', horizontalAlign: 'right', offsetY: 10 }
+    });
+    window._apx2.render().catch(function(){ window._apx2=null; });
+  }catch(e){ window._apx2=null; }
+}
+
+function paintWeeklyMix(){
+  const container = document.getElementById("weeklyMixContainer");
+  if(!container) return;
+  if(!PLAN || !PLAN.days) return;
+
+  const m = mondayOf(today0());
+  const dates = [];
+  for(let i=0; i<7; i++){
+    const d = new Date(m);
+    d.setDate(d.getDate() + i);
+    dates.push(d);
+  }
+
+  const daysHtml = dates.map(d => {
+    const dStr = iso(d);
+    const dayObj = PLAN.days.find(x => iso(x.date) === dStr);
+    const dayName = d.toLocaleDateString("en-IN", {weekday:"short"});
+    const isPast = d < today0();
+    const style = isPast ? 'opacity: 0.5;' : '';
+    
+    if(!dayObj || dayObj.sun) {
+      return `<tr style="${style}"><td class="dc">${dayName}</td><td class="cr" colspan="5">🔄 Max 2 missed leftover + revision</td></tr>`;
+    }
+
+    const cols = {
+      ACC: { cls: "ca", icon: "📗" },
+      IT:  { cls: "ci", icon: "📕" },
+      GST: { cls: "cg", icon: "📙" },
+      LAW: { cls: "cl", icon: "📘" },
+      COST:{ cls: "cc", icon: "📒" },
+      AUD: { cls: "cau",icon: "📓" },
+      MSM: { cls: "cm", icon: "📔" }
+    };
+
+    let slotsHtml = "";
+    for(let i=0; i<5; i++){
+      const slot = dayObj.slots[i];
+      if(slot) {
+        const c = cols[slot.code];
+        slotsHtml += `<td class="${c.cls}">${c.icon} ${slot.code} ${slot.short}</td>`;
+      } else {
+        slotsHtml += `<td class="dc">Free</td>`;
+      }
+    }
+    return `<tr style="${style}"><td class="dc">${dayName}</td>${slotsHtml}</tr>`;
+  }).join("");
+
+  container.innerHTML = `<table>
+    <thead><tr><th>Day</th><th>Slot 1</th><th>Slot 2</th><th>Slot 3</th><th>Slot 4</th><th>Slot 5</th></tr></thead>
+    <tbody>${daysHtml}</tbody>
+  </table>`;
+}
+
+function refreshAllLive(){
+  PLAN=buildDays();
+  const g=grandLive();
+  const set=(id,v)=>{ const e=document.getElementById(id); if(e) e.textContent=v; };
+  set("chipLeft", g.left); set("chipDone", g.done); set("chipTot", g.tot);
+  const mh=document.getElementById("monHint");
+  if(mh) mh.textContent="Har cell = ek remaining lecture. Live leftover "+g.left+" · already done "+g.done+" queue mein nahi.";
+  set("ftLeft", g.left); set("ftDone", g.done); set("ftHrs", "~"+g.hrs);
+  const fl=document.getElementById("ftLine");
+  if(fl) fl.textContent=g.left+" leftover lectures · 7 subjects · 5 classes / day · no rush";
+  const sh=document.getElementById("sumHint");
+  if(sh) sh.textContent="Total "+g.tot+" · Done "+g.done+" · Remaining "+g.left+" · ~"+g.hrs+" study hours leftover (watch + HW).";
+  const wa=document.getElementById("waveA");
+  if(wa){ const p=g.per; wa.innerHTML="GST "+p.GST.left+" leftover · Income Tax "+p.IT.left+" · Accounting "+p.ACC.left+" (incl. leftover AS) · Law "+p.LAW.left+".<br>Quality first. GST pehle khatam → slot Cost ko."; }
+  const wb=document.getElementById("waveB");
+  if(wb){ const p=g.per; wb.innerHTML="Cost "+p.COST.left+" leftover · Audit "+p.AUD.left+" · FM &amp; SM "+p.MSM.left+".<br>Jab Wave A free ho, wahi 5 slots in leftover papers + revision pe."; }
+  const tb=document.getElementById("sumBody");
+  if(tb){
+    const rows=[
+      ["Accounting","ACC","1.25×","3.5 hr","HIGH","November"],
+      ["Law","LAW","1.5×","2h 40m","HIGH","November"],
+      ["GST","GST","1.5×","2h 40m","FIRST","Oct end"],
+      ["Income Tax","IT","1×","3.5 hr","HIGH","November"],
+      ["Cost Mgmt","COST","1×","3.5 hr","DEC","December"],
+      ["Auditing","AUD","1.25×","3 hr","DEC","December"],
+      ["FM & SM","MSM","1.25×","3 hr","DEC","December"]
+    ];
+    tb.innerHTML=rows.map(r=>{
+      const x=g.per[r[1]], s=SUBS[r[1]];
+      return "<tr><td>"+r[0]+"</td><td>"+s.total+"</td><td>"+x.done+"</td><td><b>"+x.left+"</b></td><td>"+r[2]+"</td><td>"+r[3]+"</td><td>"+Math.round(x.left*HRS[r[1]])+"</td><td>"+r[4]+"</td><td>"+r[5]+"</td></tr>";
+    }).join("")+"<tr><td><b>TOTAL</b></td><td>"+g.tot+"</td><td>"+g.done+"</td><td><b>"+g.left+"</b></td><td>—</td><td>—</td><td>~"+g.hrs+"</td><td>—</td><td>Dec 2026</td></tr>";
+  }
+  try{ renderStats(); }catch(e){}
+  try{ renderNext(); }catch(e){}
+  try{ paintWeeklyMix(); }catch(e){}
+  try{ renderMonths(); }catch(e){}
+  try{ renderMS(); }catch(e){}
+  document.querySelectorAll(".scard[data-code]").forEach(paintCardLive);
+  try{ paintJourney(); }catch(e){}
+  try{ paintDeep(); }catch(e){}
+  try{ if(document.getElementById("taskList")) renderLog(false); }catch(e){}
+}
+
+function renderSubs(){
+  const host=document.getElementById("subgrid");
+  if(!host){ console.warn("no subgrid"); return; }
+  host.innerHTML=Object.keys(SUBS).map(code=>{
+    const s=SUBS[code], x=liveOf(code);
+    return `<article class="scard ${s.cls}" data-code="${code}">
+      <h3>${s.name} <span class="tg ${code}">${s.target}</span></h3>
+      <div class="meta">${s.speed}<br><span class="live-meta">Done ${x.done} · <b>Left ${x.left}</b></span></div>
+      <div class="bar"><i class="live-bar" style="width:${x.pct}%"></i></div>
+      <details class="subfold">
+      <summary class="shead">Chapter leftover · tap bubble</summary>
+      ${s.modules.map((m,mi)=>`
+        <div class="mod">
+          <h4>${m.name} · ${m.chs.length} chapters</h4>
+          ${m.chs.map((c,ci)=>{
+            const id=cid(code,mi,ci);
+            const totL=c.l||0;
+            let dL=ticks[id]?totL:0;
+            if(!dL) for(let i=0;i<totL;i++) if(ticks[id+"-L"+((c.from||1)+i)]) dL++;
+            const isDone=!!(c.done || ticks[id] || (totL&&dL===totL));
+            const lock=!!c.done;
+            const weak=(REDO[id]||0)>=2;
+            const lecs=(!lock && totL)?Array.from({length:totL},(_,i)=>{
+              const lec=(c.from||1)+i, lid=id+"-L"+lec, on=!!(ticks[id]||ticks[lid]);
+              return `<button type="button" class="bub lec${on?" on":""}" data-lec="${lid}" data-parent="${id}"><span class="dot"></span>Lecture ${lec}${on?" / done":""}</button>`;
+            }).join(""):"";
+            return `<div class="ch ${isDone?"done":""} ${weak?"weak":""}">
+              <div class="chrow">
+              <button type="button" class="bub chbtn" data-id="${id}" ${lock?"disabled data-lock=1":""}><span class="dot"></span><span class="nm">${c.n}${weak?" <span class=\"weak-tag\">WEAK ×"+REDO[id]+"</span>":""}</span><span class="left ${totL-dL?"":"ok"}">${totL?(totL-dL)+" lec left":"batch done"}</span></button>
+              ${totL&&!lock?`<button type="button" class="expbtn" data-expand="1">expand</button>`:""}
+              </div>
+              ${lecs?`<div class="lecbox">${lecs}</div>`:""}
+            </div>`;
+          }).join("")}
+        </div>`).join("")}
+      </details>
+    </article>`;
+  }).join("");
+  host.onclick=function(e){
+    const exp=e.target.closest(".expbtn");
+    if(exp){
+      e.preventDefault(); e.stopPropagation();
+      const ch=exp.closest(".ch");
+      if(ch) ch.classList.toggle("open");
+      exp.textContent=ch && ch.classList.contains("open") ? "hide" : "expand";
+      return;
+    }
+    const btn=e.target.closest("button.bub.lec");
+    if(!btn || btn.disabled || btn.getAttribute("data-lock")) return;
+    e.preventDefault();
+    e.stopPropagation();
+    const id=btn.getAttribute("data-lec");
+    if(!id) return;
+    if(ticks[id]){
+      delete ticks[id];
+      REDO[id]=(REDO[id]||0)+1;
+      storeSet(REDOK,REDO);
+      btn.classList.remove("on");
+    } else {
+      ticks[id]=1;
+      btn.classList.add("on");
+    }
+    storeSet(LS,ticks);
+    const n=id.split("-L").pop();
+    btn.innerHTML='<span class="dot"></span>Lecture '+n+(ticks[id]?" · done":"");
+    const ch=btn.closest(".ch");
+    if(ch){
+      const parent=btn.getAttribute("data-parent");
+      let left=0;
+      ch.querySelectorAll("button.bub.lec").forEach(function(b){
+        const lid=b.getAttribute("data-lec");
+        if(!ticks[lid] && !ticks[parent]) left++;
+      });
+      const span=ch.querySelector(".left");
+      if(span){ span.textContent=left+" lec left"; span.className="left"+(left?"":" ok"); }
+      if(left===0) ch.classList.add("done"); else ch.classList.remove("done");
+    }
+    const card=document.querySelector('.scard[data-code="'+(id.split("-")[0])+'"]');
+    try{ paintCardLive(card); }catch(err){}
+    try{ updateOverall(); }catch(err){}
+    try{ refreshAllLive(); }catch(err){}
+  };
+  host.onmousedown=function(e){
+    if(e.target.closest("button.bub")) e.preventDefault();
+  };
+  updateOverall();
+}
+
+function tag(s){return `<span class="tg ${s.code}">${s.short} L${s.lec}/${s.of}</span>`}
+
+function startViewDate(){
+  const t=today0();
+  const s=new Date(2026,7,25); s.setHours(0,0,0,0);
+  return t<s?s:t;
+}
+function renderNext(){
+  const box=document.getElementById("nextdays");
+  if(!box) return;
+  const from=startViewDate();
+  const todayIso=iso(today0());
+  let html="";
+  for(let i=0;i<7;i++){
+    const d=new Date(from); d.setDate(from.getDate()+i);
+    const p=findPlan(d);
+    const isToday=iso(d)===todayIso;
+    let body;
+    if(!p) body='<span class="tg REV">Plan queue ke bahar / revision</span>';
+    else if(p.sun) body='<span class="tg REV">Sunday · overflow max 2 leftover · warna is hafte ki revision</span>';
+    else body=(p.slots||[]).map(tag).join(" ");
+    html+=`<div class="row ${isToday?"now":""}"><time>${fmt(d)}${isToday?" · AAJ":""}</time><div>${body}</div></div>`;
+  }
+  box.innerHTML=html;
+  const h=document.getElementById("nextHint");
+  if(h) h.textContent="Dikha rahe hain: "+fmt(from)+" se 7 din. Kal is list ka pehla din khud badal jaayega.";
+  renderTodayBoard();
+}
+const SLOT_CLOCK=[
+  {t:"04:30–05:00", lab:"Wake + stretch"},
+  {t:"05:00–08:30", lab:"CLASS 1 + HW", i:0},
+  {t:"08:30–10:00", lab:"CLASS 2 start", i:1},
+  {t:"10:00–10:30", lab:"Breakfast (fixed)"},
+  {t:"10:30–12:30", lab:"CLASS 2 finish + HW", i:1},
+  {t:"12:30–15:10", lab:"CLASS 3 + HW", i:2},
+  {t:"15:10–15:50", lab:"Lunch"},
+  {t:"15:50–18:50", lab:"CLASS 4 + HW", i:3},
+  {t:"18:50–20:50", lab:"CLASS 5 watch", i:4},
+  {t:"21:00–21:40", lab:"Dinner (9 se pehle nahi)"},
+  {t:"21:40–22:52", lab:"Hobby 1 hr 12 min"},
+  {t:"22:52–23:20", lab:"Class 5 HW wrap + sleep"}
+];
+function subLabel(s){
+  if(!s) return "—";
+  const n=SUBS[s.code]?SUBS[s.code].name:s.code;
+  const sp=SUBS[s.code]?SUBS[s.code].speed:"";
+  return `<span class="tg ${s.code}">${s.code}</span> <b>${n}</b> · ${s.full} · L${s.lec}/${s.of} <small style="color:var(--dim)">${sp}</small>`;
+}
+function renderTodayBoard(){
+  const host=document.getElementById("todayBoard");
+  const title=document.getElementById("todayBoardTitle");
+  if(!host) return;
+  const now=today0();
+  const start=new Date(2026,7,25); start.setHours(0,0,0,0);
+  const p=findPlan(now);
+  if(title) title.textContent="Aaj ka detailed timetable · "+fmt(now);
+  if(now<start){
+    host.innerHTML='<div class="todaybox"><div class="row"><time>Prep</time><div>25 Aug 12:00 AM se yahan aaj ke 5 leftover subjects + full clock dikhega. Abhi preview — neeche generic daily clock dekh sakte ho.</div></div></div>';
+    return;
+  }
+  if(p && p.sun){
+    host.innerHTML='<div class="tboard">'+[
+      ["04:30","Wake"],["05:00–07:00","Overflow: max 2 missed leftover"],["07:00–10:00","Accounts + IT is-hafte revise"],["10:00","Breakfast"],["10:30–13:00","GST / Law notes + MCQ"],["13:00","Lunch"],["14:00–17:00","Cost / Audit / FM-SM + DPP"],["17:00–17:30","Next week plan"],["17:30–18:42","Hobby 1.2 hr"],["21:00","Dinner"]
+    ].map(x=>`<div class="sch"><h4>${x[0]}</h4><div class="row"><time>${x[0]}</time><div>${x[1]}</div></div></div>`).join("")+'</div>';
+    return;
+  }
+  const slots=(p&&p.slots)||[];
+  const hh=new Date().getHours()+new Date().getMinutes()/60;
+  function active(t){
+    const m=String(t).match(/(\d{2}):(\d{2})/g);
+    if(!m||!m.length) return false;
+    const a=m[0].split(":").map(Number);
+    const startH=a[0]+a[1]/60;
+    let endH=startH+0.5;
+    if(m[1]){ const b=m[1].split(":").map(Number); endH=b[0]+b[1]/60; }
+    return hh>=startH && hh<endH;
+  }
+  host.innerHTML='<div class="tboard">'+SLOT_CLOCK.map(r=>{
+    const lec=(typeof r.i==="number")?slots[r.i]:null;
+    const body=lec?subLabel(lec):r.lab;
+    return `<div class="sch ${active(r.t)?"now":""}"><h4>${r.t} · ${r.lab}</h4><div class="row"><time>${r.t}</time><div>${body}</div></div></div>`;
+  }).join("")+"</div>";
+}
+
+function renderMonths(){
+  const by={};
+  PLAN.days.forEach(d=>{
+    const k=mon(d.date);
+    (by[k]=by[k]||[]).push(d);
+  });
+  const keys=Object.keys(by);
+  document.getElementById("mtabs").innerHTML=keys.map((k,i)=>`<button class="mbtn ${i===0?"on":""}" data-k="${k}">${k}</button>`).join("");
+  const host=document.getElementById("mhost");
+  function paint(k){
+    const arr=by[k];
+    let html="", week=[], start=null;
+    const flush=()=>{
+      if(!week.length) return;
+      const n=week.filter(x=>!x.sun).reduce((a,d)=>a+d.slots.length,0);
+      html+=`<article class="wk"><h4>Week of ${fmt(start)} · ${n} leftover lectures</h4>
+        <div class="week"><table><thead><tr><th>Day</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th></tr></thead><tbody>
+        ${week.map(d=>d.sun?`<tr class="sun"><td>${fmt(d.date)}</td><td colspan="5"><span class="tg REV">Sunday · overflow max 2 leftover · else revise this week only</span></td></tr>`
+          :`<tr><td>${fmt(d.date)}</td>${[0,1,2,3,4].map(i=>`<td>${d.slots[i]?tag(d.slots[i]):"—"}</td>`).join("")}</tr>`).join("")}
+        </tbody></table></div></article>`;
+      week=[];
+    };
+    arr.forEach(d=>{
+      if(d.date.getDay()===1) flush();
+      if(!week.length) start=d.date;
+      week.push(d);
+    });
+    flush();
+    host.innerHTML=html;
+  }
+  paint(keys[0]);
+  document.querySelectorAll(".mbtn").forEach(b=>b.onclick=()=>{
+    document.querySelectorAll(".mbtn").forEach(x=>x.classList.remove("on"));
+    b.classList.add("on"); paint(b.dataset.k);
+  });
+}
+
+function renderMS(){
+  const L=PLAN.last;
+  const extra=[
+    {t:"25 Aug 2026",h:"Journey begins",p:"401 leftover, 7 subjects. Wake 4:30. Quality over speed."},
+    {t:L.GST?fmt(L.GST):"—",h:"GST leftover complete",p:"31 leftover khatam. Slot Cost ko milta hai."},
+    {t:L.AUD?fmt(L.AUD):"—",h:"Audit leftover complete",p:"31 leftover khatam. Slot FM & SM ko."},
+    {t:L.LAW?fmt(L.LAW):"—",h:"Law leftover complete",p:"57 leftover khatam. Nov focus = Accounts AS."},
+    {t:L.IT?fmt(L.IT):"—",h:"Income Tax leftover complete",p:"65 leftover khatam. Slot double Accounts."},
+    {t:L.ACC?fmt(L.ACC):"—",h:"Accounting leftover complete",p:"89 leftover including 51 AS."},
+    {t:L.COST?fmt(L.COST):"—",h:"Cost leftover complete",p:"71 leftover. December = revision + FM-SM wrap."},
+    {t:L.MSM?fmt(L.MSM):"—",h:"FM & SM leftover complete",p:"57 leftover. All 7 papers leftover queue empty."},
+    {t:"Dec onwards",h:"Revision + mocks",p:"Naye lectures nahi. Full revision, DPP, mocks."}
+  ];
+  const _ms=document.getElementById("mshost")||document.getElementById("ms"); if(_ms) _ms.innerHTML=extra.map(m=>`<div class="mcard"><small>${m.t}</small><h3>${m.h}</h3><p class="hint">${m.p}</p></div>`).join("");
+}
+
+function updateOverall(){
+  let d=0,t=0;
+  document.querySelectorAll("#subgrid .ch").forEach(el=>{t++; if(el.classList.contains("done")) d++;});
+  const pct=t?Math.round(100*d/t):0;
+  const bar=document.getElementById("overall-bar");
+  const txt=document.getElementById("overall-text");
+  if(bar)bar.style.width=pct+"%";
+  if(txt)txt.textContent=d+" / "+t+" chapters marked ("+pct+"%)";
+}
+
+const FULL_SYL = [
+  {g:"Group I · Paper 1 · icai.org/post/bos-int-p1-may2026-exam", name:"Advanced Accounting (100)", mods:[
+    {h:"Module 1", ch:["Chapter 1: Introduction to Accounting Standards","Chapter 2: Framework for Preparation and Presentation of Financial Statements","Chapter 3: Applicability of Accounting Standards","Chapter 4: Presentation & Disclosures Based AS — U1 AS 1 Policies · U2 AS 3 Cash Flow · U3 AS 17 Segment · U4 AS 18 Related Party · U5 AS 20 EPS · U6 AS 24 Discontinuing · U7 AS 25 Interim"]},
+    {h:"Module 2", ch:["Chapter 5: Assets Based AS — U1 AS 2 Inventory · U2 AS 10 PPE · U3 AS 13 Investments · U4 AS 16 Borrowing Costs · U5 AS 19 Leases · U6 AS 26 Intangibles · U7 AS 28 Impairment","Chapter 6: Liabilities Based AS — U1 AS 15 Employee Benefits · U2 AS 29 Provisions","Chapter 7: Items impacting FS — U1 AS 4 · U2 AS 5 · U3 AS 11 Forex · U4 AS 22 Taxes","Chapter 8: Revenue Based AS — U1 AS 7 Construction · U2 AS 9 Revenue","Chapter 9: Other AS — U1 AS 12 Grants · U2 AS 14 Amalgamations","Chapter 10: AS for Consolidated FS — U1 AS 21 · U2 AS 23 Associates · U3 AS 27 Joint Ventures"]},
+    {h:"Module 3", ch:["Chapter 11: Financial Statements of Companies — U1 Preparation of FS · U2 Cash Flow Statement","Chapter 12: Buyback of Securities","Chapter 13: Amalgamation of Companies","Chapter 14: Internal Reconstruction","Chapter 15: Accounting for Branches including Foreign Branches"]}
+  ]},
+  {g:"Group I · Paper 2 · icai.org/post/sm-inter-p2-may2026", name:"Corporate and Other Laws (100)", mods:[
+    {h:"Part I · Module 1 — Company Law & LLP Law", ch:["Chapter 1: Preliminary","Chapter 2: Incorporation of Company and Matters Incidental Thereto","Chapter 3: Prospectus and Allotment of Securities","Chapter 4: Share Capital and Debentures","Chapter 5: Acceptance of Deposits by Companies","Chapter 6: Registration of Charges"]},
+    {h:"Part I · Module 2", ch:["Chapter 7: Management & Administration","Chapter 8: Declaration and Payment of Dividend","Chapter 9: Accounts of Companies","Chapter 10: Audit and Auditors","Chapter 11: Companies Incorporated Outside India"]},
+    {h:"Part I · Module 3", ch:["Chapter 12: The Limited Liability Partnership Act, 2008"]},
+    {h:"Part II — Other Laws (ICAI numbers restart 1–3)", ch:["Chapter 1: The General Clauses Act, 1897","Chapter 2: Interpretation of Statutes","Chapter 3: The Foreign Exchange Management Act, 1999"]}
+  ]},
+  {g:"Group I · Paper 3A · May/Sept 2026 & Jan 2027 SM", name:"Taxation — Income-tax Law (50)", mods:[
+    {h:"Module 1 · Section I", ch:["Chapter 1: Basic Concepts","Chapter 2: Residence and Scope of Total Income"]},
+    {h:"Module 1 · Section II — Chapter 3 Heads of Income (5 units)", ch:["Unit 1: Salaries","Unit 2: Income from House Property","Unit 3: Profits and Gains of Business or Profession","Unit 4: Capital Gains","Unit 5: Income from Other Sources"]},
+    {h:"Module 2 · Section III", ch:["Chapter 4: Income of Other Persons included in Assessee’s Total Income","Chapter 5: Aggregation of Income, Set-Off and Carry Forward of Losses","Chapter 6: Deductions from Gross Total Income"]},
+    {h:"Module 2 · Section IV", ch:["Chapter 7: Advance Tax, TDS and TCS","Chapter 8: Provisions for filing Return of Income and Self Assessment"]},
+    {h:"Module 2 · Section V", ch:["Chapter 9: Income Tax Liability — Computation and Optimisation"]}
+  ]},
+  {g:"Group I · Paper 3B · May/Sept 2026 & Jan 2027 SM", name:"Taxation — GST (50)", mods:[
+    {h:"Module 1", ch:["Chapter 1: GST in India — An Introduction","Chapter 2: Supply under GST","Chapter 3: Charge of GST","Chapter 4: Place of Supply","Chapter 5: Exemptions from GST","Chapter 6: Time of Supply","Chapter 7: Value of Supply"]},
+    {h:"Module 2", ch:["Chapter 8: Input Tax Credit","Chapter 9: Registration","Chapter 10: Tax Invoice; Credit and Debit Notes","Chapter 11: Accounts and Records","Chapter 12: E-Way Bill","Chapter 13: Payment of Tax","Chapter 14: Tax Deduction at Source and Collection of Tax at Source","Chapter 15: Returns"]}
+  ]},
+  {g:"Group II · Paper 4 · icai.org/post/sm-inter-p4-may2026", name:"Cost and Management Accounting (100)", mods:[
+    {h:"Module 1", ch:["Chapter 1: Introduction to Cost and Management Accounting","Chapter 2: Material Cost","Chapter 3: Employee Cost and Direct Expenses","Chapter 4: Overheads – Absorption Costing Method","Chapter 5: Activity Based Costing","Chapter 6: Cost Sheet","Chapter 7: Cost Accounting Systems"]},
+    {h:"Module 2", ch:["Chapter 8: Unit & Batch Costing","Chapter 9: Job Costing","Chapter 10: Process & Operation Costing","Chapter 11: Joint Products and By Products","Chapter 12: Service Costing","Chapter 13: Standard Costing","Chapter 14: Marginal Costing","Chapter 15: Budgets and Budgetary Control"]}
+  ]},
+  {g:"Group II · Paper 5 · icai.org/post/sm-inter-p5-may2026", name:"Auditing and Ethics (100)", mods:[
+    {h:"Module 1", ch:["Chapter 1: Nature, Objective and Scope of Audit","Chapter 2: Audit Strategy, Audit Planning and Audit Programme","Chapter 3: Risk Assessment and Internal Control","Chapter 4: Audit Evidence","Chapter 5: Audit of Items of Financial Statements"]},
+    {h:"Module 2", ch:["Chapter 6: Audit Documentation","Chapter 7: Completion and Review","Chapter 8: Audit Report","Chapter 9: Special Features of Audit of Different Type of Entities","Chapter 10: Audit of Banks","Chapter 11: Ethics and Terms of Audit Engagements"]}
+  ]},
+  {g:"Group II · Paper 6A · icai.org/post/sm-inter-p6a-may2026", name:"Financial Management (50)", mods:[
+    {h:"Module 1", ch:["Chapter 1: Scope and Objectives of Financial Management","Chapter 2: Types of Financing","Chapter 3: Financial Analysis and Planning – Ratio Analysis","Chapter 4: Cost of Capital","Chapter 5: Financing Decisions – Capital Structure","Chapter 6: Financing Decisions – Leverages"]},
+    {h:"Module 2", ch:["Chapter 7: Investment Decisions","Chapter 8: Dividend Decision","Chapter 9: Management of Working Capital — U1 Introduction · U2 Treasury & Cash · U3 Inventory · U4 Receivables · U5 Payables · U6 Financing of WC"]}
+  ]},
+  {g:"Group II · Paper 6B · icai.org/post/sm-inter-p6b-may2026", name:"Strategic Management (50)", mods:[
+    {h:"Single module (aapki SM index jaisi)", ch:["Initial Pages","Chapter 1: Introduction to Strategic Management","Chapter 2: Strategic Analysis: External Environment","Chapter 3: Strategic Analysis: Internal Environment","Chapter 4: Strategic Choices","Chapter 5: Strategy Implementation and Evaluation"]}
+  ]}
+];
+
+function openSyl(){
+  const box=document.getElementById("syBody");
+  if(box && !box.dataset.ready){
+    box.innerHTML=FULL_SYL.map(p=>`<article class="sy-paper">
+      <div class="kicker">${p.g}</div>
+      <h3 style="margin:4px 0 8px">${p.name}</h3>
+      ${p.mods.map(m=>`<div class="sy-mod"><h4>${m.h}</h4><ol>${m.ch.map(c=>`<li>${c}</li>`).join("")}</ol></div>`).join("")}
+    </article>`).join("");
+    box.dataset.ready="1";
+  }
+  const ov=document.getElementById("syOv");
+  if(ov) ov.style.display="block";
+}
+function closeSyl(){ const ov=document.getElementById("syOv"); if(ov) ov.style.display="none"; }
+const logo=document.getElementById("caLogo");
+if(logo) logo.onclick=openSyl;
+const sx=document.getElementById("syClose");
+if(sx) sx.onclick=closeSyl;
+const ov=document.getElementById("syOv");
+if(ov) ov.addEventListener("click",e=>{ if(e.target===ov) closeSyl(); });
+document.addEventListener("keydown",e=>{ if(e.key==="Escape") closeSyl(); });
+
+document.querySelectorAll("#clock .tab").forEach(t=>t.onclick=()=>{
+  document.querySelectorAll("#clock .tab").forEach(x=>x.classList.remove("on"));
+  t.classList.add("on");
+  document.querySelectorAll("#clock .panel").forEach(p=>p.classList.remove("on"));
+  const pan=document.getElementById(t.dataset.p);
+  if(pan) pan.classList.add("on");
+});
+
+try{ renderStats(); }catch(e){ console.warn(e); }
+try{ renderSubs(); }catch(e){ console.warn(e); }
+try{ renderNext(); }catch(e){ console.warn(e); }
+try{ renderMonths(); }catch(e){ console.warn(e); }
+try{ renderMS(); }catch(e){ console.warn(e); }
+try{ refreshAllLive(); }catch(e){ console.warn(e); }
+
+const START = new Date(2026,7,25,0,0,0,0);
+const LOGK = "ca26_dailylog_v1";
+var DLOG = storeGet(LOGK, {});
+function iso(d){
+  const x=new Date(d);
+  return x.getFullYear()+"-"+String(x.getMonth()+1).padStart(2,"0")+"-"+String(x.getDate()).padStart(2,"0");
+}
+function sameDay(a,b){ return iso(a)===iso(b); }
+function findPlan(d){ return PLAN.days.find(x=>sameDay(x.date,d)); }
+function today0(){ const t=new Date(); t.setHours(0,0,0,0); return t; }
+function mondayOf(d){
+  const x=new Date(d); x.setHours(0,0,0,0);
+  const day=x.getDay(); const diff=day===0?-6:1-day;
+  x.setDate(x.getDate()+diff); return x;
+}
+
+function tickClock(){
+  const n=new Date();
+  const hh=String(n.getHours()).padStart(2,"0");
+  const mm=String(n.getMinutes()).padStart(2,"0");
+  const ss=String(n.getSeconds()).padStart(2,"0");
+  const el=document.getElementById("clkTime");
+  const ed=document.getElementById("clkDate");
+  if(el) el.textContent=hh+":"+mm+":"+ss;
+  if(ed) ed.textContent=n.toLocaleDateString("en-IN",{weekday:"short",day:"2-digit",month:"short",year:"numeric"});
+
+  const hr = n.getHours();
+  let greeting = "Good morning";
+  if (hr >= 12 && hr < 17) greeting = "Good afternoon";
+  else if (hr >= 17 && hr < 22) greeting = "Good evening";
+  else if (hr >= 22 || hr < 4) greeting = "Good night";
+  
+  const gEl = document.getElementById("greetingTitle");
+  if(gEl && gEl.textContent !== greeting + ", Pawan") {
+      gEl.textContent = greeting + ", Pawan";
+  }
+
+}
+
+function defaultTasks(d){
+  const p=findPlan(d);
+  const list=[];
+  list.push({id:"wake",label:"04:30 · Wake + stretch (no phone)"});
+  if(!p){
+    list.push({id:"off",label:"Is din leftover-queue ke bahar — light revision / rest"});
+  } else if(p.sun){
+    list.push({id:"ov1",label:"Overflow: max 2 missed leftover lectures (agar hain)"});
+    list.push({id:"revA",label:"Revise is hafte ke Accounts + IT leftover chapters"});
+    list.push({id:"revB",label:"Revise GST / Law notes + MCQ"});
+    list.push({id:"revC",label:"Light Cost / Audit / FM-SM + DPP weak areas"});
+    list.push({id:"plan",label:"Next week preview (10 min)"});
+  } else {
+    const slots=["05:00 Class 1 + HW","08:30 Class 2 + HW","12:30 Class 3 + HW","15:50 Class 4 + HW","18:50 Class 5 + HW"];
+    (p.slots||[]).forEach((s,i)=>{
+      list.push({id:"c"+i,label:slots[i]+" · "+s.code+" · "+s.full+" L"+s.lec+"/"+s.of});
+    });
+  }
+  list.push({id:"bf",label:"10:00 · Breakfast"});
+  list.push({id:"hobby",label:"Hobby 1 hr 12 min"});
+  list.push({id:"din",label:"Dinner after 21:00 (9 se pehle nahi)"});
+  if(p && p.sun){
+    const ov=(DLOG[iso(d)]&&DLOG[iso(d)].overflow)||[];
+    ov.forEach((x,i)=> list.push({id:"ovx"+i, label:"Sunday overflow · "+x.label+" (from "+x.from+")"}));
+  }
+  return list;
+}
+
+function countDoneDay(key,d){
+  const tasks=defaultTasks(d);
+  const rec=DLOG[key]||{};
+  const done=tasks.filter(t=>rec[t.id]).length;
+  return {done,total:tasks.length,lec:tasks.filter(t=>t.id.startsWith("c")&&rec[t.id]).length,plannedLec:tasks.filter(t=>t.id.startsWith("c")).length,pct:tasks.length?Math.round(100*done/tasks.length):0};
+}
+
+var weekAnchor=mondayOf(today0());
+
+function renderWeekChart(){
+  const box=document.getElementById("wchart");
+  const title=document.getElementById("weekTitle");
+  if(!box) return;
+  const mon=new Date(weekAnchor);
+  if(title) title.textContent="Week "+fmt(mon)+" → "+fmt(new Date(mon.getFullYear(),mon.getMonth(),mon.getDate()+6))+" · date tap = us din ke tasks";
+  const sel=(document.getElementById("logDate")||{}).value;
+  const W=700,H=72;
+  let pts=[], days=[];
+  for(let i=0;i<7;i++){
+    const d=new Date(mon); d.setDate(mon.getDate()+i);
+    const c=countDoneDay(iso(d),d);
+    days.push({d,c,isod:iso(d)});
+    const x=((i+0.5)/7)*W;
+    const y=10+(H-20)*(1-c.pct/100);
+    pts.push(x.toFixed(1)+","+y.toFixed(1));
+  }
+  const dots=pts.map((p,i)=>{
+    const xy=p.split(",");
+    return `<circle cx="${xy[0]}" cy="${xy[1]}" r="5" fill="#22c55e"/>`;
+  }).join("");
+  let html="<div class=\"wdates\">";
+  html+=`<svg class="wover" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none"><polyline fill="none" stroke="#22c55e" stroke-width="3" points="${pts.join(" ")}"/>${dots}</svg>`;
+  for(let i=0;i<7;i++){
+    const rec=days[i], d=rec.d, c=rec.c, isod=rec.isod;
+    const p=findPlan(d);
+    const on=sel===isod?"on":"";
+    const sun=d.getDay()===0?"sunish":"";
+    const isToday=isod===iso(today0())?"today":"";
+    html+=`<div class="wday ${on} ${sun} ${isToday}" data-iso="${isod}">
+      <div class="wd">${d.toLocaleDateString("en-IN",{weekday:"short"})}</div>
+      <div class="wn">${d.getDate()}</div>
+      <div class="pct">${c.pct}%</div>
+      <div class="hint" style="margin:0;font-size:10px">${p?(p.sun?"Rev":(p.slots||[]).length+" lec"):"—"} · ${c.done}/${c.total}</div>
+    </div>`;
+  }
+  html+="</div>";
+  box.innerHTML=html;
+  document.querySelectorAll(".wday").forEach(function(el){
+    el.onclick=function(){
+      const inp=document.getElementById("logDate");
+      if(inp) inp.value=el.dataset.iso;
+      renderLog(false);
+    };
+  });
+  try{ paintSunRep(); }catch(e){}
+}
+
+function renderLog(resetDate){
+  const inp=document.getElementById("logDate");
+  if(resetDate || !inp.value) inp.value=iso(today0());
+  const d=new Date(inp.value+"T00:00:00");
+  weekAnchor=mondayOf(d);
+  const p=findPlan(d);
+  const key=iso(d);
+  if(!DLOG[key]) DLOG[key]={};
+  const tasks=defaultTasks(d);
+  document.getElementById("logLabel").innerHTML = p ? (p.sun ? "Sunday · revision day" : "<strong>"+(p.slots||[]).length+" leftover lectures</strong> aaj ke plan se") : "Queue ke bahar";
+  
+  const todayIso = iso(today0());
+  const isToday = (inp.value === todayIso);
+  let titleText = fmt(d) + " · isi din ke specified tasks";
+  if(!isToday) {
+     titleText += ` <span style="cursor:pointer; color: var(--accent); font-size: 11px; padding: 4px 8px; border-radius: 4px; border: 1px solid var(--accent); margin-left: 12px; display: inline-block; box-shadow: 0 0 10px var(--accent-glow);" onclick="document.getElementById('logDate').value='${todayIso}'; renderLog(false);">👈 Jump to Today</span>`;
+  }
+  document.getElementById("taskTitle").innerHTML = titleText;
+
+  document.getElementById("taskList").innerHTML = tasks.map(t=>{
+    const on=!!DLOG[key][t.id];
+    return `<div class="task ${on?"ok":""}"><button type="button" class="bub" data-tid="${t.id}"><span class="dot"></span>${t.label}</button></div>`;
+  }).join("");
+  document.querySelectorAll("#taskList .bub").forEach(btn=>btn.onclick=()=>{
+    const on=!DLOG[key][btn.dataset.tid];
+    DLOG[key][btn.dataset.tid]=on?1:0;
+    DLOG[key]._ev=DLOG[key]._ev||[];
+    DLOG[key]._ev.push({t:Date.now(),id:btn.dataset.tid,on:on?1:0});
+    storeSet(LOGK,DLOG);
+    try{ beepTimes(3,920); islandShow(on?"Task done":"Task undone"); }catch(e){}
+    btn.closest(".task").classList.toggle("ok",on);
+    renderAnalysis(); renderHist(); renderWeekChart();
+    try{ paintJourney(); }catch(e){}
+    try{ paintSunRep(); }catch(e){}
+    try{ paintDeep(); }catch(e){}
+  });
+  renderAnalysis(); renderHist(); renderWeekChart();
+  try{ paintDeep(); }catch(e){}
+}
+
+function renderAnalysis(){
+  const now=today0();
+  const start=new Date(START);
+  const elapsed=Math.floor((now-start)/86400000);
+  const teachElapsed=PLAN.days.filter(x=>!x.sun && x.date<now).length;
+  const plannedLecs=PLAN.days.filter(x=>!x.sun && x.date<now).reduce((a,d)=>a+d.slots.length,0);
+  let loggedLec=0, fullDays=0;
+  const walk=new Date(Math.max(start, now));
+  for(let i=0;i<400;i++){
+    const dd=new Date(start); dd.setDate(start.getDate()+i);
+    if(dd>now) break;
+    const c=countDoneDay(iso(dd),dd);
+    loggedLec+=c.lec;
+    if(c.total && c.done===c.total) fullDays++;
+  }
+  let streak=0;
+  for(let i=0;i<400;i++){
+    const dd=new Date(now); dd.setDate(now.getDate()-i);
+    if(dd<start) break;
+    const c=countDoneDay(iso(dd),dd);
+    const p=findPlan(dd);
+    const ok=p&&!p.sun ? c.lec>=Math.min(5,(p.slots||[]).length||5) : c.done>=3;
+    if(i===0 && !ok) continue;
+    if(!ok) break;
+    streak++;
+  }
+  // Performance category (Good / Better / Best etc.) based on pace %
+  const pacePct = plannedLecs ? Math.round(100*loggedLec/plannedLecs) : 0;
+  let cat="—", catCls="cat-neutral", warning="";
+  if(now>=start && plannedLecs>0){
+    if(pacePct>=100){ cat="BEST"; catCls="cat-best"; }
+    else if(pacePct>=90){ cat="BETTER"; catCls="cat-better"; }
+    else if(pacePct>=75){ cat="GOOD"; catCls="cat-good"; }
+    else if(pacePct>=50){ cat="MODERATE"; catCls="cat-moderate"; }
+    else { cat="POOR"; catCls="cat-poor";
+      warning="⚠️ Warning: performance bahut peeche hai ("+pacePct+"% of plan). Aaj ke 5 leftover pehle poore karo, Sunday overflow max 2. Quality mat girao — consistency hi CA ka loop-hole hai.";
+    }
+    if(pacePct>=50 && pacePct<75){
+      warning="⚠️ Notice: pace kam pad raha hai ("+pacePct+"% of plan). Agle din thoda push karo warna backlog badhega.";
+    }
+  }
+  let klass="wait", title, body;
+  if(now<start){
+    klass="wait"; title="Start 25 Aug 2026 — abhi prep";
+    body="Clock upar corner mein chal raha hai (device time). 25 Aug se ye chart khud aaj ke 5 leftover lectures dikhayega. Internet nahi chahiye.";
+  } else if(loggedLec===0){
+    klass="mid"; title="Aaj ke tasks neeche tick karo";
+    body="Day "+(elapsed+1)+". Plan ke hisaab se ab tak "+plannedLecs+" leftover lectures hone chahiye. Tick local save — file ko bookmark / download karke offline kholo.";
+  } else if(loggedLec>=plannedLecs){
+    klass="good"; title="On track";
+    body="Logged "+loggedLec+" vs planned "+plannedLecs+". Streak ~"+streak+" din.";
+  } else if(plannedLecs-loggedLec<=5){
+    klass="mid"; title="~1 din peeche";
+    body="Logged "+loggedLec+" / planned "+plannedLecs+". Sunday overflow max 2. Speed mat badhao.";
+  } else {
+    klass="bad"; title="Pace peeche";
+    body="Logged "+loggedLec+" vs "+plannedLecs+". Quality same rakho, Sunday catch-up.";
+  }
+  const vEl=document.getElementById("verdict");
+  vEl.className="verdict "+klass;
+  vEl.innerHTML="<div class='v-top'><span class='pace-cat "+catCls+"'>Performance: "+cat+" · "+pacePct+"%</span></div>"
+    +"<h3>"+title+"</h3><p>"+body+"</p>"
+    +(warning? "<p class='pace-warn'>"+warning+"</p>":"");
+  const daysLeftTeach=PLAN.days.filter(x=>!x.sun && x.date>=now).length;
+  document.getElementById("logStats").innerHTML=[
+    ["Device aaj", now.toLocaleDateString("en-IN",{day:"2-digit",month:"short"}), "auto"],
+    ["Plan day", now<start?("T-"+Math.ceil((start-now)/86400000)):("Day "+(elapsed+1)), "25 Aug se"],
+    ["Should-be lectures", plannedLecs, "if 5/day"],
+    ["You ticked lectures", loggedLec, "is device pe"],
+    ["Full days", fullDays, "saare tasks"],
+    ["Streak", streak+" d", ""],
+    ["Teach days left", daysLeftTeach, "queue"],
+    ["Offline", "100%", "no internet"]
+  ].map(x=>`<div class="stat"><em>${x[0]}</em><b style="font-size:18px">${x[1]}</b><em>${x[2]}</em></div>`).join("");
+}
+
+function renderHist(){
+  const now=today0();
+  let html="";
+  const start=new Date(START);
+  start.setHours(0,0,0,0);
+  const recCount=Object.keys(DLOG).length;
+  const kToday=iso(now);
+  if(new Date()>=START && !DLOG[kToday]){ DLOG[kToday]={created:Date.now()}; storeSet(LOGK,DLOG); }
+  if(now<start){
+    const body=document.getElementById("histBody");
+    if(body) body.innerHTML='<tr><td colspan="5">Daily records <b>25 Aug 2026, 12:00 AM</b> se automatically shuru honge. Aaj 23/24 Aug preview hai — koi official log abhi nahi likha ja raha.</td></tr>';
+    return;
+  }
+  for(let d=new Date(now); d>=start; d.setDate(d.getDate()-1)){
+    const day=new Date(d);
+    const key=iso(day);
+    if(!DLOG[key]){ DLOG[key]={created:Date.now()}; }
+    const p=findPlan(day);
+    const c=countDoneDay(key,day);
+    const type=day<START?"pre-start":(p?(p.sun?"Sunday":"Study"):"Buffer / after queue");
+    const plan=p&&!p.sun?(p.slots||[]).map(s=>s.code+" L"+s.lec).join(", "):(p&&p.sun?"Revision":"—");
+    const st=c.done===0?"Recorded · 0 ticks":(c.done===c.total?"Complete":c.done+"/"+c.total);
+    html+=`<tr class="${p&&p.sun?"sun":""}"><td>${fmt(day)}</td><td>${type}</td><td>${plan}</td><td>${c.done}/${c.total} · lec ${c.lec}/${c.plannedLec||0}</td><td>${st}</td></tr>`;
+  }
+  localStorage.setItem(LOGK,JSON.stringify(DLOG));
+  const body=document.getElementById("histBody");
+  if(body) body.innerHTML=html||`<tr><td colspan="5">25 Aug 2026 se records yahan jama honge. Aaj tak ${recCount} din save.</td></tr>`;
+}
+
+document.getElementById("logDate").addEventListener("change", ()=>renderLog(false));
+document.getElementById("thisWeek").onclick=()=>{ weekAnchor=mondayOf(today0()); document.getElementById("logDate").value=iso(today0()); renderLog(false); };
+document.getElementById("prevWeek").onclick=()=>{ weekAnchor.setDate(weekAnchor.getDate()-7); document.getElementById("logDate").value=iso(weekAnchor); renderLog(false); };
+document.getElementById("nextWeek").onclick=()=>{ weekAnchor.setDate(weekAnchor.getDate()+7); document.getElementById("logDate").value=iso(weekAnchor); renderLog(false); };
+
+let lastDay=iso(today0());
+// Shared helper: add tasks to Sunday overflow WITHOUT duplicates.
+// Dedup by task id + origin day, so re-shifting the same task never doubles it.
+function addToSundayOverflow(sundKey, fromKey, items){
+  if(!items || !items.length) return 0;
+  if(!DLOG[sundKey]) DLOG[sundKey]={};
+  const ov=DLOG[sundKey].overflow || (DLOG[sundKey].overflow=[]);
+  const seen={};
+  ov.forEach(o=>{ if(o && o.id && o.from) seen[o.id+"|"+o.from]=1; });
+  let added=0;
+  items.forEach(x=>{
+    const k=x.id+"|"+fromKey;
+    if(seen[k]) return;
+    ov.push({from:fromKey,label:x.label,id:x.id});
+    seen[k]=1;
+    added++;
+  });
+  storeSet(LOGK,DLOG);
+  return added;
+}
+function pushMissedToSunday(fromIso){
+  try{
+    const d=new Date(fromIso+"T00:00:00");
+    if(isNaN(+d) || d.getDay()===0) return;
+    const tasks=defaultTasks(d);
+    const rec=DLOG[fromIso]||{};
+    const missed=tasks.filter(x=>!rec[x.id]);
+    if(!missed.length) return;
+    const sun=new Date(d);
+    const add=(7-d.getDay())%7; sun.setDate(d.getDate()+(add||7));
+    const sk=iso(sun);
+    addToSundayOverflow(sk, fromIso, missed);
+    try{ islandShow("Missed tasks Sunday overflow mein add"); }catch(e){}
+  }catch(e){}
+}
+function rollToNewCalendarDay(){
+  const t=iso(today0());
+  if(t===lastDay) return false;
+  try{ pushMissedToSunday(lastDay); }catch(e){}
+  lastDay=t;
+  weekAnchor=mondayOf(today0());
+  const inp=document.getElementById("logDate");
+  if(inp) inp.value=t;
+  renderLog(true);
+  const v=document.getElementById("verdict");
+  if(v){
+    const note=document.createElement("p");
+    note.style.marginTop="8px";
+    note.innerHTML="<b>Naya din shuru</b> — 12:00 AM ke baad analysis + aaj ke tasks auto-refresh ho gaye.";
+    v.appendChild(note);
+  }
+  return true;
+}
+let _tb=0;
+
+const REMK="ca26_remind_v1";
+let REM=storeGet(REMK,{});
+function remindSlots(){
+  const d=today0(), p=findPlan(d), sun=d.getDay()===0 || (p&&p.sun);
+  const slots=(!sun && p && p.slots)||[];
+  function sub(i){ const s=slots[i]; return s? (s.code+" · "+s.full+" L"+s.lec):""; }
+  if(sun) return [
+    {id:"w",h:4,m:30,msg:"04:30 Wake"},
+    {id:"c",h:5,m:0,msg:"05:00 Overflow / revision"},
+    {id:"bf",h:10,m:0,msg:"10:00 Breakfast"},
+    {id:"hb",h:17,m:30,msg:"17:30 Hobby 1.2 hr"},
+    {id:"dn",h:21,m:0,msg:"21:00 Dinner"}
+  ];
+  return [
+    {id:"w",h:4,m:30,msg:"04:30 Wake + stretch"},
+    {id:"c1",h:5,m:0,msg:"05:00 CLASS 1 + HW"+(sub(0)?" · "+sub(0):"")},
+    {id:"c2",h:8,m:30,msg:"08:30 CLASS 2"+(sub(1)?" · "+sub(1):"")},
+    {id:"bf",h:10,m:0,msg:"10:00 Breakfast"},
+    {id:"c3",h:12,m:30,msg:"12:30 CLASS 3 + HW"+(sub(2)?" · "+sub(2):"")},
+    {id:"ln",h:15,m:10,msg:"15:10 Lunch"},
+    {id:"c4",h:15,m:50,msg:"15:50 CLASS 4 + HW"+(sub(3)?" · "+sub(3):"")},
+    {id:"c5",h:18,m:50,msg:"18:50 CLASS 5"+(sub(4)?" · "+sub(4):"")},
+    {id:"dn",h:21,m:0,msg:"21:00 Dinner (9 se pehle nahi)"},
+    {id:"hb",h:21,m:40,msg:"21:40 Hobby 1 hr 12 min"},
+    {id:"sl",h:22,m:52,msg:"22:52 Wrap + sleep"}
+  ];
+}
+function beepTimes(n, freq){
+  n=n||3; freq=freq||880;
+  try{
+    const ctx=new (window.AudioContext||window.webkitAudioContext)();
+    for(let i=0;i<n;i++){
+      setTimeout(function(){
+        try{
+          const o=ctx.createOscillator(), g=ctx.createGain();
+          o.connect(g); g.connect(ctx.destination);
+          o.frequency.value=freq; g.gain.value=0.05; o.start();
+          setTimeout(function(){ try{o.stop();}catch(e){} },140);
+        }catch(e){}
+      }, i*220);
+    }
+  }catch(e){}
+}
+function islandShow(msg){
+  const el=document.getElementById("island");
+  const tx=document.getElementById("islandTxt");
+  if(tx) tx.textContent=msg;
+  if(el){ el.classList.add("on"); clearTimeout(el._t); el._t=setTimeout(function(){ el.classList.remove("on"); }, 6500); }
+}
+function showNudge(msg){
+  islandShow(msg);
+  const bar=document.getElementById("nudge");
+  const tx=document.getElementById("nudgeTxt");
+  if(tx) tx.innerHTML="<b>Ab:</b> "+msg;
+  if(bar) bar.classList.add("on");
+  try{
+    if(typeof Notification!=="undefined" && Notification.permission==="granted"){
+      new Notification("CA Inter leftover",{body:msg});
+    }
+  }catch(e){}
+  beepTimes(3, 880);
+}
+function checkReminders(){
+  const n=new Date();
+  remindSlots().forEach(function(s){
+    if(n.getHours()!==s.h || n.getMinutes()!==s.m) return;
+    const id=iso(today0())+"-"+s.id;
+    if(REM[id]) return;
+    REM[id]=1; storeSet(REMK,REM);
+    showNudge(s.msg);
+  });
+}
+function paintNotifyBtn(){
+  const b=document.getElementById("btnNotify");
+  if(!b) return;
+  let st="Bell: page";
+  try{
+    if(typeof Notification==="undefined") st="Bell: page only";
+    else if(Notification.permission==="granted") st="Bell: on";
+    else if(Notification.permission==="denied") st="Bell: blocked";
+  }catch(e){}
+  b.textContent=st;
+}
+
+function hideStartStrips(){
+  try{
+    if(new Date()<START) return;
+    ["prestrip","histStrip"].forEach(function(id){
+      var el=document.getElementById(id);
+      if(!el) return;
+      el.classList.add("off");
+      el.style.display="none";
+      el.setAttribute("aria-hidden","true");
+    });
+    document.body.classList.remove("has-prestrip");
+  }catch(e){}
+}
+function drawArchiveSvg(rec){
+  const live=(rec&&rec.live)||{};
+  const lines=[
+    {k:"done",c:"#d62728",name:"Done %"},{k:"left",c:"#1f4e9e",name:"Leftover %"},
+    {k:"today",c:"#2ca02c",name:"Aaj %"},{k:"log",c:"#ff7f0e",name:"Logged"},
+    {k:"as",c:"#9467bd",name:"AS-51"},{k:"ACC",c:"#8b7cff",name:"ACC"},
+    {k:"IT",c:"#ff6b7a",name:"IT"},{k:"GST",c:"#3dd68c",name:"GST"}
+  ];
+  const W=640,H=240,pad={l:40,r:10,t:12,b:24};
+  let g="";
+  for(let i=0;i<=4;i++){
+    const y=pad.t+i*(H-pad.t-pad.b)/4;
+    g+=`<line x1="${pad.l}" y1="${y}" x2="${W-pad.r}" y2="${y}" stroke="#6d82a6" stroke-width=".6"/>`;
+    g+=`<text x="4" y="${y+4}" fill="#1a2744" font-size="10">${100-i*25}</text>`;
+  }
+  const polys=lines.map(L=>`<polyline fill="none" stroke="${L.c}" stroke-width="2" points="${_lsPoly(live[L.k]||[0],W,H,pad,0,100)}"/>`).join("");
+  const days=rec&&rec.days?Object.keys(rec.days).length:0;
+  return `<p class="hint">${days} din archived · hidden store</p><svg viewBox="0 0 ${W} ${H}">${g}${polys}</svg>`+
+    `<div class="lleg">${lines.map(L=>`<span><i style="background:${L.c}"></i>${L.name}</span>`).join("")}</div>`;
+}
+function openSunGraph(){
+  const ov=document.getElementById("sunGraphOv");
+  const body=document.getElementById("sunGraphBody");
+  if(!ov||!body) return;
+  const rec=storeGet(GRAPHHIDE,{});
+  const nights=Object.keys(NIGHT||{}).filter(k=>NIGHT[k]&&NIGHT[k].ans);
+  body.innerHTML=drawArchiveSvg(rec)+`<h3 style="margin-top:12px">Hidden night reports</h3>`+
+    (nights.length? nights.map(k=>`<p class="hint">${k} · ${NIGHT[k].ans}</p>`).join(""):"<p class=hint>Is hafte koi 10:30 verify nahi</p>");
+  ov.classList.add("open");
+}
+function maybeSundayGraphPop(){
+  try{
+    if(new Date().getDay()!==0) return;
+    const k="ca26_sunpop_"+iso(today0());
+    if(sessionStorage.getItem(k)) return;
+    sessionStorage.setItem(k,"1");
+    archiveGraphHidden();
+    openSunGraph();
+  }catch(e){}
+}
+function paintWaterDay(){
+  const fill=document.getElementById("waterFill");
+  const hrs=document.getElementById("waterHrs");
+  const sub=document.getElementById("waterSub");
+  if(!fill && !hrs) return;
+  const n=new Date();
+  const mid=new Date(n); mid.setHours(24,0,0,0);
+  const left=Math.max(0, mid-n);
+  const h=left/3600000;
+  const hh=Math.floor(h);
+  const mm=Math.floor((left%3600000)/60000);
+  const ss=Math.floor((left%60000)/1000);
+  const pct=Math.max(2,Math.min(100,100*h/24));
+  if(fill) fill.style.height=pct.toFixed(2)+"%";
+  if(hrs) hrs.textContent=hh+"h "+String(mm).padStart(2,"0")+"m "+String(ss).padStart(2,"0")+"s";
+  if(sub) sub.textContent=pct.toFixed(1)+"% din baaki · 12:00 AM pe tank full";
+}
+
+const NIGHTK="ca26_night_v1";
+var NIGHT=storeGet(NIGHTK,{});
+function paintSpeedGraph(){
+  const svg=document.getElementById("speedSvg");
+  const hint=document.getElementById("speedHint");
+  const warn=document.getElementById("speedWarn");
+  if(!svg) return;
+  const now=today0();
+  const vals=[];
+  for(let i=13;i>=0;i--){
+    const d=new Date(now); d.setDate(now.getDate()-i);
+    const c=countDoneDay(iso(d),d);
+    const p=findPlan(d);
+    let score=50;
+    if(p&&!p.sun){
+      const need=Math.min(5,(p.slots||[]).length||5);
+      score=need?Math.min(100, Math.round(100*(c.lec/need))):c.pct;
+    } else score=c.pct;
+    vals.push(score);
+  }
+  const W=720,H=200,pad={l:36,r:16,t:20,b:28};
+  const pts=vals.map((v,i)=>{
+    const x=pad.l+i*(W-pad.l-pad.r)/Math.max(1,vals.length-1);
+    const y=pad.t+(H-pad.t-pad.b)*(1-v/100);
+    return [x,y,v];
+  });
+  const last=vals[vals.length-1]||0;
+  const ok=last>=80;
+  const poly=pts.map(p=>p[0].toFixed(1)+","+p[1].toFixed(1)).join(" ");
+  const dots=pts.map(p=>`<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="4" fill="${p[2]>=80?"#22c55e":"#f97316"}"><title>${Math.round(p[2])}%</title></circle>`).join("");
+  svg.innerHTML=`<polyline fill="none" stroke="${ok?"#22c55e":"#f97316"}" stroke-width="3.2" points="${poly}"/>`+dots+
+    `<text x="40" y="18" fill="#64748b" font-size="12">14-day pace</text>`;
+  if(hint) hint.textContent=ok?"Speed sahi · schedule timely poora ho sakta hai.":"Speed giri · aaj ke leftover pehle, Sunday overflow max 2.";
+  if(warn) warn.textContent=ok?"":"Warning: 5/day se peeche. Quality mat girao — missed Sunday pe.";
+}
+function checkNightVerify(){
+  const n=new Date();
+  if(n.getHours()!==22 || n.getMinutes()!==30) return;
+  const id=iso(today0())+"-n1030";
+  if(NIGHT[id] && NIGHT[id].ans) return;
+  if(window._nightShown===id) return;
+  window._nightShown=id;
+  NIGHT[id]=Object.assign(NIGHT[id]||{},{asked:Date.now()});
+  storeSet(NIGHTK,NIGHT);
+  beepTimes(3, 880);
+  islandShow("10:30 PM · aaj ke kaam verify karo");
+  const box=document.getElementById("nightAsk");
+  if(box) box.classList.add("on");
+  try{ if(typeof Notification!=="undefined" && Notification.permission==="granted") new Notification("CA Inter 10:30",{body:"Aaj ke saare kaam hue?"}); }catch(e){}
+}
+function nightClose(){
+  const box=document.getElementById("nightAsk");
+  if(box) box.classList.remove("on");
+  const q=document.getElementById("nightAskQ");
+  const s=document.getElementById("nightAskS");
+  if(q) q.style.display="";
+  if(s) s.style.display="none";
+}
+function saveNightAns(ok){
+  const id=iso(today0())+"-n1030";
+  NIGHT[id]=Object.assign(NIGHT[id]||{},{ans:ok? "complete":"missed", at:Date.now()});
+  storeSet(NIGHTK,NIGHT);
+  if(ok){
+    const box=document.getElementById("nightAsk");
+    if(box) box.classList.remove("on");
+    islandShow("Night report: complete");
+    return;
+  }
+  // Sunday selection flow
+  try{ showSundaySelect(); }catch(e){ nightClose(); }
+}
+function showSundaySelect(){
+  const q=document.getElementById("nightAskQ");
+  const s=document.getElementById("nightAskS");
+  if(q) q.style.display="none";
+  if(s) s.style.display="flex";
+  const host=document.getElementById("nightTaskList");
+  if(!host) { nightClose(); return; }
+  const d=today0();
+  const key=iso(d);
+  const tasks=defaultTasks(d);
+  const rec=DLOG[key]||{};
+  // Which tasks are ALREADY pending on the target Sunday (to avoid re-selecting)
+  const sun=new Date(d);
+  const add=(7-d.getDay())%7; sun.setDate(d.getDate()+(add||7));
+  const sk=iso(sun);
+  const sunRec=DLOG[sk]||{};
+  const sunIds={};
+  (sunRec.overflow||[]).forEach(o=>{ if(o && o.id && o.from===key) sunIds[o.id]=1; });
+  host.innerHTML=tasks.map(t=>{
+    const done=!!rec[t.id];
+    const already=sunIds[t.id]?1:0;
+    let cls="night-task";
+    let state="";
+    let badge='<span class="tbadge missb">missed</span>';
+    if(done){ cls+=" done disabled"; state='disabled checked'; badge='<span class="tbadge doneb">done</span>'; }
+    else if(already){ cls+=" disabled"; state='disabled'; badge='<span class="tbadge sank">Sunday pe hai</span>'; }
+    return `<label class="${cls}">
+      <input type="checkbox" data-id="${t.id}" ${state}/>
+      <span class="tlabel">${t.label}</span>
+      ${badge}
+    </label>`;
+  }).join("");
+  const docount=tasks.filter(t=>!!rec[t.id]).length;
+  const alreadyCnt=sunIds ? tasks.filter(t=>!rec[t.id] && sunIds[t.id]).length : 0;
+  const mcount=tasks.length-docount-alreadyCnt;
+  const head=s.querySelector("p");
+  if(head) head.innerHTML="<b>Tick karo kaunse tasks Sunday pe add karein</b>"+
+    '<br><small style="font-weight:400;color:#71717a;font-size:12px">'+docount+' already done · '+mcount+' missed · '+alreadyCnt+' already Sunday pe (shaded)</small>';
+}
+function confirmSundaySelect(){
+  const host=document.getElementById("nightTaskList");
+  const keys=[];
+  if(host) host.querySelectorAll("input[type=checkbox]:checked:not(:disabled)").forEach(c=>keys.push(c.dataset.id));
+  const d=today0();
+  const key=iso(d);
+  const tasks=defaultTasks(d);
+  const sel=tasks.filter(t=>keys.indexOf(t.id)>=0);
+  const sun=new Date(d);
+  const add=(7-d.getDay())%7; sun.setDate(d.getDate()+(add||7));
+  const sk=iso(sun);
+  const added=addToSundayOverflow(sk, key, sel);
+  nightClose();
+  islandShow(sel.length? (added? "Selected tasks Sunday overflow mein add":"Pahle se Sunday pe hai — duplicate nahi hua") : "Koi task Sunday pe add nahi hua");
+}
+function openNightVerify(){
+  // Verify only allowed from 8:00 PM onwards (20:00)
+  const n=new Date();
+  const hh=n.getHours()+n.getMinutes()/60;
+  if(hh<20){
+    showTimeBlock();
+    return;
+  }
+  const box=document.getElementById("nightAsk");
+  if(box) box.classList.add("on");
+  beepTimes(2, 880);
+}
+function showTimeBlock(){
+  const tb=document.getElementById("timeBlock");
+  const tt=document.getElementById("tbTime");
+  if(tt) tt.textContent="Aab tak nahi — 8:00 PM ke baad khulega";
+  if(tb) tb.style.display="flex";
+  beepTimes(2, 660);
+}
+(function(){
+  const b=document.getElementById("verifyBubble");
+  if(b) b.addEventListener("click", openNightVerify);
+  const y=document.getElementById("nightYes");
+  if(y) y.addEventListener("click", function(){ saveNightAns(true); });
+  const n=document.getElementById("nightNo");
+  if(n) n.addEventListener("click", function(){ saveNightAns(false); });
+  const c=document.getElementById("nightSelConfirm");
+  if(c) c.addEventListener("click", confirmSundaySelect);
+  const bk=document.getElementById("nightSelBack");
+  if(bk) bk.addEventListener("click", function(){
+    const q=document.getElementById("nightAskQ");
+    const s=document.getElementById("nightAskS");
+    if(q) q.style.display="";
+    if(s) s.style.display="none";
+  });
+  const tb=document.getElementById("tbClose");
+  if(tb) tb.addEventListener("click", function(){
+    const el=document.getElementById("timeBlock");
+    if(el) el.style.display="none";
+  });
+})();
+function pushLiveFigures(){
+  try{
+    const g=grandLive();
+    const set=function(id,v){ const e=document.getElementById(id); if(e) e.textContent=v; };
+    set("chipLeft", g.left); set("chipDone", g.done); set("chipTot", g.tot);
+    set("ftLeft", g.left); set("ftDone", g.done);
+    if(g.hrs!=null) set("ftHrs", "~"+g.hrs);
+  }catch(e){}
+}
+function autoRefresh(){
+  try{ hideStartStrips(); }catch(e){}
+  try{ rollToNewCalendarDay(); }catch(e){}
+  try{ paintLiveMe(); }catch(e){}
+  try{ paintDeep(); }catch(e){}
+  try{ paintWaterDay(); }catch(e){}
+  try{ paintSpeedGraph(); }catch(e){}
+  try{ renderWeekChart(); }catch(e){}
+  try{ paintJourney(); }catch(e){}
+  try{ paintAS(); }catch(e){}
+  try{ paintSunRep(); }catch(e){}
+  try{ paintExamLock(); }catch(e){}
+  try{ renderTodayBoard(); }catch(e){}
+  try{ renderStats(); }catch(e){}
+  try{ renderAnalysis(); }catch(e){}
+  try{ pushLiveFigures(); }catch(e){}
+  try{ updateOverall(); }catch(e){}
+}
+function heartbeat(){
+  tickClock();
+  hideStartStrips();
+  rollToNewCalendarDay();
+  try{ checkReminders(); }catch(e){}
+  try{ checkNightVerify(); }catch(e){}
+  try{ paintWaterDay(); }catch(e){}
+}
+tickClock();
+try{ hideStartStrips(); }catch(e){}
+try{ paintWaterDay(); paintJourney(); autoRefresh(); }catch(e){}
+setInterval(heartbeat,1000);
+setInterval(autoRefresh,3000);
+try{ renderLog(true); }catch(e){ console && console.warn(e); }
+try{ paintLiveMe(); paintDeep(); paintWaterDay(); }catch(e){}
+(function(){
+  var x=document.getElementById("sunGraphX");
+  var ov=document.getElementById("sunGraphOv");
+  if(x) x.onclick=function(){ if(ov) ov.classList.remove("open"); };
+  if(ov) ov.addEventListener("click",function(e){ if(e.target===ov) ov.classList.remove("open"); });
+  try{ setTimeout(maybeSundayGraphPop,600); }catch(e){}
+})();
+(function(){ var b=document.getElementById("btnPrint"); if(b) b.onclick=doPrint; })();
+(function(){
+  var x=document.getElementById("nudgeX");
+  if(x) x.onclick=function(){ var n=document.getElementById("nudge"); if(n) n.classList.remove("on"); };
+  var b=document.getElementById("btnNotify");
+  if(b) b.onclick=function(){
+    try{
+      if(typeof Notification==="undefined"){
+        alert("Preview/iframe mein OS popup nahi. Page khula rakho — time pe upar bar + beep. File Chrome se seedha kholo.");
+        paintNotifyBtn(); return;
+      }
+      if(Notification.permission==="denied"){
+        alert("Bell blocked. Chrome lock → Site settings → Notifications → Allow. Ya file Downloads se kholo. Bar + beep tab khuli ho to chalega.");
+        paintNotifyBtn(); return;
+      }
+      Notification.requestPermission().then(function(p){ try{ if(p==="granted") localStorage.setItem("ca26_bell_want","1"); }catch(e){} paintNotifyBtn(); });
+    }catch(e){ paintNotifyBtn(); }
+  };
+  try{ paintNotifyBtn(); }catch(e){}
+})();
+
+(function(){
+  try{
+    if(localStorage.getItem("ca26_bell_want")==="1" && typeof Notification!=="undefined" && Notification.permission==="default"){
+      Notification.requestPermission().then(function(p){ try{ if(p==="granted") localStorage.setItem("ca26_bell_want","1"); }catch(e){} paintNotifyBtn(); });
+    }
+  }catch(e){}
+})();
+
+
+</script>
+
+<script>
+// ── Sidebar bubble nav · scroll-spy (fixed: document order + correct #log / #deep mapping) ──
+(function(){
+  var links = Array.prototype.slice.call(document.querySelectorAll("#mainNav a"));
+  var secs = links.map(function(a){
+    return { a: a, el: document.getElementById((a.getAttribute("href")||"").slice(1)) };
+  }).filter(function(p){ return !!p.el; });
+  if(!secs.length) return;
+  secs.sort(function(x, y){ return x.el.getBoundingClientRect().top - y.el.getBoundingClientRect().top; });
+  var ticking = false;
+  function update(){
+    ticking = false;
+    var line = 170, best = secs[0], i;
+    for(i=0;i<secs.length;i++){
+      if(secs[i].el.getBoundingClientRect().top <= line) best = secs[i];
+    }
+    if((window.innerHeight + (window.scrollY||window.pageYOffset||0)) >= (document.documentElement.scrollHeight - 80)){
+      best = secs[secs.length-1];
+    }
+    links.forEach(function(a){ a.classList.toggle("on", a === best.a); });
+  }
+  function onScroll(){ if(!ticking){ ticking = true; requestAnimationFrame(update); } }
+  window.addEventListener("scroll", onScroll, {passive:true});
+  window.addEventListener("resize", onScroll, {passive:true});
+  update();
+})();
+
+// ── Focus Timer Logic ──
+var pomoInterval;
+var pomoTime = 50 * 60;
+function pomoControl(action) {
+  const modal = document.getElementById('pomoModal');
+  const display = document.getElementById('pomoTimer');
+  if (action === 'close') {
+    modal.style.display = 'none';
+    clearInterval(pomoInterval);
+    return;
+  }
+  if (action === 'open') {
+    modal.style.display = 'flex';
+    pomoTime = 50 * 60;
+    display.textContent = '50:00';
+    return;
+  }
+  clearInterval(pomoInterval);
+  pomoTime = action === 'break' ? 10 * 60 : 50 * 60;
+  display.textContent = action === 'break' ? '10:00' : '50:00';
+  pomoInterval = setInterval(() => {
+    pomoTime--;
+    if (pomoTime < 0) {
+      clearInterval(pomoInterval);
+      if (typeof beepTimes === 'function') beepTimes(3, 880);
+      alert(action === 'break' ? 'Break over! Back to your CA mission.' : 'Study session complete! Great job.');
+      return;
+    }
+    const m = Math.floor(pomoTime / 60).toString().padStart(2, '0');
+    const s = (pomoTime % 60).toString().padStart(2, '0');
+    display.textContent = `${m}:${s}`;
+  }, 1000);
+}
+
+// ── Offline backup download ──
+function downloadBackup() {
+  const data = JSON.stringify(localStorage);
+  const blob = new Blob([data], {type: 'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  const d = new Date();
+  const dateStr = `${d.getFullYear()}-${(d.getMonth()+1).toString().padStart(2,'0')}-${d.getDate().toString().padStart(2,'0')}`;
+  a.download = `CA_Schedule_Backup_${dateStr}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  const toast = document.createElement('div');
+  toast.textContent = 'Backup saved \u2705';
+  toast.style.position = 'fixed';
+  toast.style.bottom = '20px';
+  toast.style.right = '20px';
+  toast.style.background = 'rgba(0, 128, 0, 0.8)';
+  toast.style.color = '#fff';
+  toast.style.padding = '12px 20px';
+  toast.style.borderRadius = '8px';
+  toast.style.zIndex = 10000;
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 3000);
+}
+
+// \u2500\u2500 Flip-Tile Clock \u2013 Draggable \u2500\u2500
+(function(){
+  var clk = document.getElementById('floatClock');
+  if(!clk) return;
+
+  var saved = JSON.parse(localStorage.getItem('clkPos') || 'null');
+  if(saved){
+    clk.style.transform = 'none';
+    clk.style.left = saved.x + 'px';
+    clk.style.top  = saved.y + 'px';
+  }
+
+  var dragging = false, ox = 0, oy = 0;
+
+  function startDrag(cx, cy){
+    dragging = true;
+    var rect = clk.getBoundingClientRect();
+    ox = cx - rect.left;
+    oy = cy - rect.top;
+    clk.classList.add('dragging');
+    clk.style.transform = 'none';
+  }
+  function moveDrag(cx, cy){
+    if(!dragging) return;
+    var nx = cx - ox;
+    var ny = cy - oy;
+    nx = Math.max(0, Math.min(window.innerWidth  - clk.offsetWidth,  nx));
+    ny = Math.max(0, Math.min(window.innerHeight - clk.offsetHeight, ny));
+    clk.style.left = nx + 'px';
+    clk.style.top  = ny + 'px';
+  }
+  function stopDrag(){
+    if(!dragging) return;
+    dragging = false;
+    clk.classList.remove('dragging');
+    localStorage.setItem('clkPos', JSON.stringify({ x: parseInt(clk.style.left), y: parseInt(clk.style.top) }));
+  }
+
+  clk.addEventListener('mousedown', function(e){
+    e.preventDefault();
+    startDrag(e.clientX, e.clientY);
+  });
+  document.addEventListener('mousemove', function(e){ moveDrag(e.clientX, e.clientY); });
+  document.addEventListener('mouseup',   stopDrag);
+
+  clk.addEventListener('touchstart', function(e){
+    var t = e.touches[0];
+    startDrag(t.clientX, t.clientY);
+  }, { passive: true });
+  document.addEventListener('touchmove', function(e){
+    if(!dragging) return;
+    e.preventDefault();
+    var t = e.touches[0];
+    moveDrag(t.clientX, t.clientY);
+  }, { passive: false });
+  document.addEventListener('touchend', stopDrag);
+
+  function pad(n){ return String(n).padStart(2,'0'); }
+  function setT(id, ch){
+    var el = document.getElementById(id);
+    if(!el) return;
+    if(el.textContent !== ch){
+      el.style.transform = 'scale(0.82)';
+      setTimeout(function(){ el.textContent = ch; el.style.transform = 'scale(1)'; }, 90);
+    }
+  }
+  function clkTick(){
+    var now = new Date();
+    var h = pad(now.getHours()), m = pad(now.getMinutes()), s = pad(now.getSeconds());
+    setT('clkH1',h[0]); setT('clkH2',h[1]);
+    setT('clkM1',m[0]); setT('clkM2',m[1]);
+    setT('clkS1',s[0]); setT('clkS2',s[1]);
+  }
+  clkTick();
+  setInterval(clkTick, 1000);
+})();
+</script>
+<div id='nightToast'></div>
+
+<!-- Syllabus Guide Modal -->
+<div id="syOv" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:10000;overflow-y:auto;padding:20px;">
+  <div id="syBox" style="max-width:700px;margin:40px auto;background:#1e293b;border-radius:16px;padding:28px;border:1px solid #334155;">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;">
+      <div>
+        <h2 style="margin:0;color:#f8fafc;font-size:1.4rem;">📚 Syllabus Guide</h2>
+        <p style="margin:4px 0 0;color:#64748b;font-size:0.85rem;">CA Inter — Remaining Chapters</p>
+      </div>
+      <button type="button" onclick="document.getElementById('syOv').style.display='none'" style="background:#334155;border:none;color:#f8fafc;width:32px;height:32px;border-radius:8px;font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;">×</button>
+    </div>
+    <div id="syBody" style="color:#cbd5e1;font-size:0.9rem;line-height:1.6;">Loading...</div>
+  </div>
+</div>
+
+</body>
+</html>

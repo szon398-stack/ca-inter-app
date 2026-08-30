@@ -1,0 +1,25 @@
+{
+  "name": "ca-inter-planner-3d",
+  "version": "1.0.0",
+  "description": "CA Inter leftover lecture planner — Node.js + Express + Three.js + GSAP + WebSocket + MongoDB",
+  "main": "server/index.js",
+  "private": true,
+  "scripts": {
+    "setup": "node scripts/copy-vendor.js",
+    "start": "node scripts/copy-vendor.js && node server/index.js",
+    "dev": "node scripts/copy-vendor.js && node server/index.js",
+    "seed": "node server/db/seed.js",
+    "test": "node scripts/smoke-test.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "gsap": "^3.12.5",
+    "mongoose": "^8.6.0",
+    "three": "0.128.0",
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "jsdom": "^30.0.1"
+  }
+}
